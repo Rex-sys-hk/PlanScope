@@ -1,0 +1,13 @@
+# @package _global_
+job_name: scope
+py_func: train
+objective_aggregate_mode: mean
+
+defaults:
+        - override /data_augmentation:
+                  - scope_scenario_generator
+        - override /splitter: nuplan
+        - override /model: scope_model
+        - override /scenario_filter: training_scenarios_tiny
+        - override /custom_trainer: scope_trainer
+        - override /lightning: custom_lightning

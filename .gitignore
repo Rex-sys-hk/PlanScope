@@ -162,3 +162,5 @@ wandb/
 outputs/
 *.ckpt
 checkpoints/
+videos/
+exp/
