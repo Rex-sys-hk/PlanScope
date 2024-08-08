@@ -1,4 +1,4 @@
-_target_: src.models.pluto.pluto_model.PlanningModel
+_target_: src.models.pluto.scope_model.PlanningModel
 _convert_: "all"
 
 dim: 128
@@ -19,9 +19,10 @@ state_attn_encoder: true
 use_hidden_proj: false
 cat_x: true
 ref_free_traj: true
+recursive_decoder: false
 
 feature_builder:
-  _target_: src.feature_builders.pluto_feature_builder.PlutoFeatureBuilder
+  _target_: src.feature_builders.scope_feature_builder.ScopeFeatureBuilder
   _convert_: "all"
   radius: 120
   history_horizon: 2

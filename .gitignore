@@ -162,3 +162,6 @@ wandb/
 outputs/
 *.ckpt
 checkpoints/
+any_test.py
+exp/
+videos/

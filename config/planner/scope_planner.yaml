@@ -1,5 +1,5 @@
-pluto_planner:
-  _target_: src.planners.pluto_planner.PlutoPlanner
+scope_planner:
+  _target_: src.planners.scope_planner.ScopePlanner
   _convert_: "all"
 
   render: false
@@ -10,7 +10,7 @@ pluto_planner:
   learning_based_score_weight: 0.3
 
   planner:
-    _target_: src.models.pluto.pluto_model.PlanningModel
+    _target_: src.models.pluto.scope_model.PlanningModel
     _convert_: "all"
 
     dim: 128
@@ -28,12 +28,14 @@ pluto_planner:
     state_dropout: 0.75
     use_ego_history: false
     state_attn_encoder: true
-    use_hidden_proj: true
+    use_hidden_proj: false
     cat_x: true
     ref_free_traj: true
+    recursive_decoder: false
+
 
     feature_builder:
-      _target_: src.feature_builders.pluto_feature_builder.PlutoFeatureBuilder
+      _target_: src.feature_builders.scope_feature_builder.ScopeFeatureBuilder
       _convert_: "all"
       radius: 120
       history_horizon: 2
