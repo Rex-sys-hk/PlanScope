@@ -45,12 +45,12 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python run_training.py \
   data_loader.datamodule.train_fraction=0.2 \
   data_loader.datamodule.val_fraction=0.2 \
   data_loader.datamodule.test_fraction=0.2 \
-  model.use_hidden_proj=true +custom_trainer.use_contrast_loss=true
+  model.use_hidden_proj=true +custom_trainer.use_contrast_loss=true \
 
   
 
 
+  # checkpoint=/workspace/pluto/exp/exp/training/pluto/2024.08.08.21.36.20/checkpoints/last.ckpt
   # cache.cache_path=/nuplan/exp/sanity_check \
-  # checkpoint=/workspace/pluto/exp/exp/training/pluto/2024.08.05.14.47.09/checkpoints/last.ckpt
-  # checkpoint=/workspace/PlanScope/exp/exp/training/planTF/2024.08.02.04.22.41/checkpoints/last.ckpt \
   # cache.cache_path=$WS/exp/cache_plantf_1M \
+  # kill -9 $(ps ax | grep run_training.py | fgrep -v grep | awk '{ print $1 }')
