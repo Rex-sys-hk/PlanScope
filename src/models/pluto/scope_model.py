@@ -46,7 +46,7 @@ class PlanningModel(TorchModuleWrapper):
         use_hidden_proj=False,
         cat_x=False,
         ref_free_traj=False,
-        recursive_decoder=False,
+        recursive_decoder:bool=False,
         feature_builder: PlutoFeatureBuilder = PlutoFeatureBuilder(),
     ) -> None:
         super().__init__(

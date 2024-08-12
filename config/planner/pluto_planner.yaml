@@ -8,6 +8,7 @@ pluto_planner:
   candidate_subsample_ratio: 1.0
   candidate_min_num: 10
   learning_based_score_weight: 0.3
+  rule_based_evaluator: false
 
   planner:
     _target_: src.models.pluto.pluto_model.PlanningModel

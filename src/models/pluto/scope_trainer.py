@@ -21,6 +21,8 @@ from src.metrics.prediction_avg_fde import PredAvgFDE
 from src.optim.warmup_cos_lr import WarmupCosLR
 
 from .loss.esdf_collision_loss import ESDFCollisionLoss
+from pytorch_lightning.utilities import grad_norm
+from src.utils.min_norm_solvers import MinNormSolver
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +40,7 @@ class LightningTrainer(pl.LightningModule):
         regulate_yaw=False,
         objective_aggregate_mode: str = "mean",
         mul_ade_loss: list[str] = ['phase_loss', 'scale_loss'],
+        dynamic_weight: bool = True
     ) -> None:
         """
         Initializes the class.
@@ -72,6 +75,8 @@ class LightningTrainer(pl.LightningModule):
         if use_collision_loss:
             self.collision_loss = ESDFCollisionLoss()
         self.mul_ade = mulADE(k=1, with_grad=True, mul_ade_loss=mul_ade_loss).to(self.device)
+        self.weights = torch.autograd.Variable(torch.ones(6).to(self.device), requires_grad=True)
+        self.dynamic_weight = dynamic_weight
 
     def on_fit_start(self) -> None:
         metrics_collection = MetricCollection(
@@ -109,7 +114,6 @@ class LightningTrainer(pl.LightningModule):
 
         return losses["loss"] if self.training else 0.0
 
-    # TODO
     def _compute_objectives(self, res, data) -> Dict[str, torch.Tensor]:
         bs, _, T, _ = res["prediction"].shape
 
@@ -179,16 +183,32 @@ class LightningTrainer(pl.LightningModule):
             + ego_ref_free_reg_loss
             + scope_loss
         )
+        if self.training and self.dynamic_weight:
+            self.losses = [ego_reg_loss, 
+                           ego_cls_loss, 
+                           prediction_loss, 
+                            # contrastive_loss[0], 
+                            collision_loss, 
+                            ego_ref_free_reg_loss, 
+                            scope_loss]
+            loss = self.mgda_find_scaler(self.losses)
 
         return {
             "loss": loss,
             "reg_loss": ego_reg_loss.item(),
             "cls_loss": ego_cls_loss.item(),
-            "ref_free_reg_loss": ego_ref_free_reg_loss.item(),
-            "collision_loss": collision_loss.item(),
             "prediction_loss": prediction_loss.item(),
             "contrastive_loss": contrastive_loss.item(),
+            "collision_loss": collision_loss.item(),
+            "ref_free_reg_loss": ego_ref_free_reg_loss.item(),
             "scope_loss": scope_loss.item(),
+            "alpha_reg_loss": self.weights[0],
+            "alpha_cls_loss": self.weights[1],
+            "prediction_loss": self.weights[2],
+            # "contrastive_loss": self.weights[5],
+            "collision_loss": self.weights[3],
+            "ref_free_reg_loss": self.weights[4],
+            "scope_loss": self.weights[5],
         }
 
     def get_prediction_loss(self, data, prediction, valid_mask, target):
@@ -485,7 +505,21 @@ class LightningTrainer(pl.LightningModule):
 
         return [optimizer], [scheduler]
 
-    # def on_before_optimizer_step(self, optimizer) -> None:
-    #     for name, param in self.named_parameters():
-    #         if param.grad is None:
-    #             print("unused param", name)
+    # def on_before_optimizer_step(self, optimizer):
+    #     # Compute the 2-norm for each layer
+    #     # If using mixed precision, the gradients are already unscaled here
+    #     sh_layer = self.model.encoder_blocks[-1].mlp.fc2
+    #     norms = grad_norm(sh_layer, norm_type=2)
+    #     self.log_dict(norms)
+
+    def mgda_find_scaler(self, losses):
+        sh_layer = self.model.encoder_blocks[-1].mlp.fc2
+        gw = []
+        for i in range(len(losses)):
+            dl = torch.autograd.grad(losses[i], sh_layer.parameters(), retain_graph=True, create_graph=True, allow_unused=True)[0]
+            # dl = torch.norm(dl)
+            gw.append([dl])
+        sol, min_norm = MinNormSolver.find_min_norm_element(gw)
+        self.weights = sol
+        weighted_loss = torch.stack([l*w for l,w in zip(losses, sol)]).sum()
+        return weighted_loss

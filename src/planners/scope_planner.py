@@ -54,6 +54,7 @@ class ScopePlanner(AbstractPlanner):
         eval_num_frames: int = 80,
         learning_based_score_weight: float = 0.25,
         use_prediction: bool = True,
+        rule_based_evaluator: bool = True,
     ) -> None:
         """
         Initializes the ML planner class.
@@ -90,9 +91,11 @@ class ScopePlanner(AbstractPlanner):
         self._scenario_type = scenario.scenario_type
 
         # post-processing
-        self._trajectory_evaluator = TrajectoryEvaluator(eval_dt, eval_num_frames)
-        self._emergency_brake = EmergencyBrake()
-        self._learning_based_score_weight = learning_based_score_weight
+        self._rule_based_evaluator = rule_based_evaluator
+        if self._rule_based_evaluator:
+            self._trajectory_evaluator = TrajectoryEvaluator(eval_dt, eval_num_frames)
+            self._emergency_brake = EmergencyBrake()
+            self._learning_based_score_weight = learning_based_score_weight
 
         if render:
             self._scene_render = NuplanScenarioRender()
@@ -191,45 +194,47 @@ class ScopePlanner(AbstractPlanner):
         else:
             predictions = None
 
-        ref_free_trajectory = (
-            (out["output_ref_free_trajectory"][0].cpu().numpy().astype(np.float64))
-            if "output_ref_free_trajectory" in out
-            else None
-        )
+        best_candidate_idx = probability.argmax()
+        if self._rule_based_evaluator:
+            ref_free_trajectory = (
+                (out["output_ref_free_trajectory"][0].cpu().numpy().astype(np.float64))
+                if "output_ref_free_trajectory" in out
+                else None
+            )
 
-        candidate_trajectories, learning_based_score = self._trim_candidates(
-            candidate_trajectories,
-            probability,
-            current_input.history.ego_states[-1],
-            ref_free_trajectory,
-        )
+            candidate_trajectories, learning_based_score = self._trim_candidates(
+                candidate_trajectories,
+                probability,
+                current_input.history.ego_states[-1],
+                ref_free_trajectory,
+            )
 
-        rule_based_scores = self._trajectory_evaluator.evaluate(
-            candidate_trajectories=candidate_trajectories,
-            init_ego_state=current_input.history.ego_states[-1],
-            detections=current_input.history.observations[-1],
-            traffic_light_data=current_input.traffic_light_data,
-            agents_info=self._get_agent_info(
-                planner_feature.data, predictions, ego_state
-            ),
-            route_lane_dict=self._scenario_manager.get_route_lane_dicts(),
-            drivable_area_map=self._scenario_manager.drivable_area_map,
-            baseline_path=self._get_ego_baseline_path(
-                self._scenario_manager.get_cached_reference_lines(), ego_state
-            ),
-        )
+            rule_based_scores = self._trajectory_evaluator.evaluate(
+                candidate_trajectories=candidate_trajectories,
+                init_ego_state=current_input.history.ego_states[-1],
+                detections=current_input.history.observations[-1],
+                traffic_light_data=current_input.traffic_light_data,
+                agents_info=self._get_agent_info(
+                    planner_feature.data, predictions, ego_state
+                ),
+                route_lane_dict=self._scenario_manager.get_route_lane_dicts(),
+                drivable_area_map=self._scenario_manager.drivable_area_map,
+                baseline_path=self._get_ego_baseline_path(
+                    self._scenario_manager.get_cached_reference_lines(), ego_state
+                ),
+            )
 
-        final_scores = (
-            rule_based_scores + self._learning_based_score_weight * learning_based_score
-        )
+            final_scores = (
+                rule_based_scores + self._learning_based_score_weight * learning_based_score
+            )
 
-        best_candidate_idx = final_scores.argmax()
+            best_candidate_idx = final_scores.argmax()
 
-        trajectory = self._emergency_brake.brake_if_emergency(
-            ego_state,
-            self._trajectory_evaluator.time_to_at_fault_collision(best_candidate_idx),
-            candidate_trajectories[best_candidate_idx],
-        )
+            trajectory = self._emergency_brake.brake_if_emergency(
+                ego_state,
+                self._trajectory_evaluator.time_to_at_fault_collision(best_candidate_idx),
+                candidate_trajectories[best_candidate_idx],
+            )
 
         # no emergency
         if trajectory is None:

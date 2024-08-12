@@ -98,7 +98,7 @@ class HierachicalDecoder(nn.Module):
         future_steps,
         yaw_constraint=False,
         cat_x=False,
-        recursive_decoder: Optional[bool] = False,
+        recursive_decoder: bool = False,
     ) -> None:
         super().__init__()
 

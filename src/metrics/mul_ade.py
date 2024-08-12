@@ -62,7 +62,7 @@ class mulADE(torch.nn.Module):
         #         if isinstance(v, dict):
         #             print_keys(v, pfix+">> ")
         # print_keys(data)
-        error = 0
+        error = torch.tensor(0.0, device=outputs["trajectory"].device)
         history = data['agent']['velocity'][:, 0, :self.history_length, :2]
         self.mask = self.mask.to(outputs["trajectory"].device)
         b,r,m,t,dim = outputs["trajectory"].shape

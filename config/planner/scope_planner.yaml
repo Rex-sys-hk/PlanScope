@@ -8,6 +8,7 @@ scope_planner:
   candidate_subsample_ratio: 1.0
   candidate_min_num: 10
   learning_based_score_weight: 0.3
+  rule_based_evaluator: false
 
   planner:
     _target_: src.models.pluto.scope_model.PlanningModel
@@ -31,7 +32,7 @@ scope_planner:
     use_hidden_proj: false
     cat_x: true
     ref_free_traj: true
-    recursive_decoder: false
+    recursive_decoder: true
 
 
     feature_builder:
