@@ -194,7 +194,9 @@ class PlutoPlanner(AbstractPlanner):
         else:
             predictions = None
 
-        best_candidate_idx = probability.argmax()
+        best_candidate_idx = None
+        trajectory = None
+        rule_based_scores = None
         if self._rule_based_evaluator:
             ref_free_trajectory = (
                 (out["output_ref_free_trajectory"][0].cpu().numpy().astype(np.float64))
@@ -235,6 +237,13 @@ class PlutoPlanner(AbstractPlanner):
                 self._trajectory_evaluator.time_to_at_fault_collision(best_candidate_idx),
                 candidate_trajectories[best_candidate_idx],
             )
+        else:
+            r,m,t,d = candidate_trajectories.shape
+            candidate_trajectories = candidate_trajectories.reshape(-1,t,d)
+            probability = probability.reshape(-1)
+            best_candidate_idx = probability.argmax()
+            rule_based_scores = probability-0.1
+
 
         # no emergency
         if trajectory is None:
