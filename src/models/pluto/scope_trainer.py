@@ -204,11 +204,11 @@ class LightningTrainer(pl.LightningModule):
             "scope_loss": scope_loss.item(),
             "alpha_reg_loss": self.weights[0],
             "alpha_cls_loss": self.weights[1],
-            "prediction_loss": self.weights[2],
-            # "contrastive_loss": self.weights[5],
-            "collision_loss": self.weights[3],
-            "ref_free_reg_loss": self.weights[4],
-            "scope_loss": self.weights[5],
+            "alpha_prediction_loss": self.weights[2],
+            # "alpha_contrastive_loss": self.weights[5],
+            "alpha_collision_loss": self.weights[3],
+            "alpha_ref_free_reg_loss": self.weights[4],
+            "alpha_scope_loss": self.weights[5],
         }
 
     def get_prediction_loss(self, data, prediction, valid_mask, target):
