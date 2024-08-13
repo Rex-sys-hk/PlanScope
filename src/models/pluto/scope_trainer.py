@@ -76,6 +76,7 @@ class LightningTrainer(pl.LightningModule):
             self.collision_loss = ESDFCollisionLoss()
         self.mul_ade = mulADE(k=1, with_grad=True, mul_ade_loss=mul_ade_loss).to(self.device)
         self.weights = torch.autograd.Variable(torch.ones(6).to(self.device), requires_grad=True)
+        self.loss_scaler = torch.autograd.Variable(torch.tensor(6.0).to(self.device), requires_grad=True)
         self.dynamic_weight = dynamic_weight
 
     def on_fit_start(self) -> None:
@@ -512,7 +513,9 @@ class LightningTrainer(pl.LightningModule):
     #     norms = grad_norm(sh_layer, norm_type=2)
     #     self.log_dict(norms)
 
-    def mgda_find_scaler(self, losses):
+    def mgda_find_scaler(self, losses, skip=5):
+        if self.global_step%skip!=0:
+            return torch.stack([l*w for l,w in zip(losses, self.weights)]).sum()*self.loss_scaler
         sh_layer = self.model.encoder_blocks[-1].mlp.fc2
         gw = []
         for i in range(len(losses)):
@@ -522,4 +525,4 @@ class LightningTrainer(pl.LightningModule):
         sol, min_norm = MinNormSolver.find_min_norm_element(gw)
         self.weights = sol
         weighted_loss = torch.stack([l*w for l,w in zip(losses, sol)]).sum()
-        return weighted_loss
+        return weighted_loss*self.loss_scaler
