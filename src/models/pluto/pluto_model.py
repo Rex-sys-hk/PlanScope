@@ -223,9 +223,9 @@ class PlanningModel(TorchModuleWrapper):
                 out["output_trajectory"] = best_trajectory
                 out["candidate_trajectories"] = out_trajectory
             else:
-                # TODO
+                # TODO (1,0,0) originally
                 out["output_trajectory"] = out["output_ref_free_trajectory"]
-                out["probability"] = torch.zeros(1, 1, 1)
+                out["probability"] = torch.ones(1, 1, 1)
                 out["candidate_trajectories"] = torch.zeros(
                     1, 1, 1, self.future_steps, 3
                 )

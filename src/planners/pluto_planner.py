@@ -194,23 +194,23 @@ class PlutoPlanner(AbstractPlanner):
         else:
             predictions = None
 
+        ref_free_trajectory = (
+            (out["output_ref_free_trajectory"][0].cpu().numpy().astype(np.float64))
+            if "output_ref_free_trajectory" in out
+            else None
+        )
+
+        candidate_trajectories, learning_based_score = self._trim_candidates(
+            candidate_trajectories,
+            probability,
+            current_input.history.ego_states[-1],
+            ref_free_trajectory,
+        )
+
         best_candidate_idx = None
         trajectory = None
         rule_based_scores = None
         if self._rule_based_evaluator:
-            ref_free_trajectory = (
-                (out["output_ref_free_trajectory"][0].cpu().numpy().astype(np.float64))
-                if "output_ref_free_trajectory" in out
-                else None
-            )
-
-            candidate_trajectories, learning_based_score = self._trim_candidates(
-                candidate_trajectories,
-                probability,
-                current_input.history.ego_states[-1],
-                ref_free_trajectory,
-            )
-
             rule_based_scores = self._trajectory_evaluator.evaluate(
                 candidate_trajectories=candidate_trajectories,
                 init_ego_state=current_input.history.ego_states[-1],
@@ -238,11 +238,8 @@ class PlutoPlanner(AbstractPlanner):
                 candidate_trajectories[best_candidate_idx],
             )
         else:
-            r,m,t,d = candidate_trajectories.shape
-            candidate_trajectories = candidate_trajectories.reshape(-1,t,d)
-            probability = probability.reshape(-1)
-            best_candidate_idx = probability.argmax()
-            rule_based_scores = probability-0.1
+            best_candidate_idx = learning_based_score.argmax()
+            rule_based_scores = learning_based_score
 
 
         # no emergency
