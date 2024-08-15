@@ -515,7 +515,7 @@ class LightningTrainer(pl.LightningModule):
 
     def mgda_find_scaler(self, losses, skip=5):
         if self.global_step%skip!=0:
-            return torch.stack([l*w for l,w in zip(losses, self.weights)]).sum()*self.loss_scaler
+            return torch.stack([l*w for l,w in zip(losses, self.weights)]).sum()
         sh_layer = self.model.encoder_blocks[-1].mlp.fc2
         gw = []
         for i in range(len(losses)):
@@ -525,4 +525,4 @@ class LightningTrainer(pl.LightningModule):
         sol, min_norm = MinNormSolver.find_min_norm_element(gw)
         self.weights = sol
         weighted_loss = torch.stack([l*w for l,w in zip(losses, sol)]).sum()
-        return weighted_loss*self.loss_scaler
+        return weighted_loss

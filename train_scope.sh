@@ -28,8 +28,9 @@ CUDA_VISIBLE_DEVICES=0 python run_training.py \
   epochs=2 warmup_epochs=1 \
   scenario_builder=nuplan cache.cache_path=$WS/exp/sanity_check cache.use_cache_without_dataset=true \
   data_loader.params.batch_size=4 data_loader.params.num_workers=1 \
-  +custom_trainer.mul_ade_loss=[] \
-  +custom_trainer.dynamic_weight=true \
+  +custom_trainer.mul_ade_loss=['phase_loss'] \
+  +custom_trainer.dynamic_weight=false \
+  model.recursive_decoder=false \
   &&
   
 
@@ -48,14 +49,16 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python run_training.py \
   data_loader.datamodule.train_fraction=0.2 \
   data_loader.datamodule.val_fraction=0.2 \
   data_loader.datamodule.test_fraction=0.2 \
-  +custom_trainer.mul_ade_loss=[] \
-  +custom_trainer.dynamic_weight=true \
+  +custom_trainer.mul_ade_loss=['phase_loss'] \
+  +custom_trainer.dynamic_weight=false \
+  model.recursive_decoder=false \
   &&
 
   echo "====Training End===="
   
 
 
+  # checkpoint=/workspace/pluto/exp/exp/training/scope/2024.08.13.23.56.31/checkpoints/last.ckpt \
   # model.use_hidden_proj=true +custom_trainer.use_contrast_loss=true \
   # cache.cache_path=/nuplan/exp/sanity_check \
   # checkpoint=/workspace/pluto/exp/exp/training/scope/2024.08.07.18.26.11/checkpoints/last.ckpt
