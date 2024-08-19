@@ -27,7 +27,7 @@ class mulADE(torch.nn.Module):
         with_grad: bool = False,
         history_length: int = 21,
         whole_length: int = 101,
-        mul_ade_loss: list[str]=['phase_loss', 'scale_loss'],
+        mul_ade_loss: list[str]=['phase_loss', 'scale_loss', 'v_loss'],
     ) -> None:
         super().__init__()
         self.k = k
@@ -78,13 +78,18 @@ class mulADE(torch.nn.Module):
         target = data['agent']['velocity'][:,0,:,:2]
         # target = torch.cat([history, target], dim=-2)
         target = target.permute(0, 2, 1)
+        if 'v_loss' in self.mul_ade_loss:
+            v_error = torch.norm(
+                pred - target, p=2, dim=-1
+            )
+            error += v_error[...,self.history_length:].mean()
 
         pred_coeff,_ = ptwt.cwt(pred, self.widths, self.wavelet, sampling_period=self.dt)
         pred_coeff = pred_coeff.permute(1, 0, 3, 2)
 
         target_coeff,_ = ptwt.cwt(target, self.widths, self.wavelet, sampling_period=self.dt)
         target_coeff = target_coeff.permute(1, 0, 3, 2)
-        if 'angle_loss' in self.mul_ade_loss:
+        if 'phase_loss' in self.mul_ade_loss:
             pred_coeff_angle = torch.angle(pred_coeff)
             target_coeff_angle = torch.angle(target_coeff)
             angle_error = torch.norm(
