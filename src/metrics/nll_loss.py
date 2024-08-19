@@ -7,8 +7,43 @@ from .utils import sort_predictions
 import ptwt
 import pywt
 
+# TODO: DEBUG THIS FUNCTION (?)
+def mvn_loss(pred_dist: torch.Tensor, traj_gt: torch.Tensor, masks: torch.Tensor):
+    """
+    Computes negative log likelihood of ground truth trajectory under a predictive distribution with a single mode,
+    with a bivariate Gaussian distribution predicted at each time in the prediction horizon
 
-class mulADE(torch.nn.Module):
+    :param pred_dist: parameters of a bivariate Gaussian distribution, shape [batch_size, sequence_length, 5]
+    :param traj_gt: ground truth trajectory, shape [batch_size, sequence_length, 2]
+    :param masks: masks for varying length ground truth, shape [batch_size, sequence_length]
+    :return:
+    """
+    mu_x = pred_dist[:, :, 0]
+    mu_y = pred_dist[:, :, 1]
+    x = traj_gt[:, :, 0]
+    y = traj_gt[:, :, 1]
+
+    sig_x = pred_dist[:, :, 2]
+    sig_y = pred_dist[:, :, 3]
+    rho = pred_dist[:, :, 4]
+    ohr = torch.pow(1 - torch.pow(rho, 2), -0.5)
+
+    nll = 0.5 * torch.pow(ohr, 2) * \
+        (torch.pow(sig_x, 2) * torch.pow(x - mu_x, 2) +
+         torch.pow(sig_y, 2) * torch.pow(y - mu_y, 2) -
+         2 * rho * torch.pow(sig_x, 1) * torch.pow(sig_y, 1) * (x - mu_x) * (y - mu_y))\
+        - torch.log(sig_x * sig_y * ohr) + 1.8379
+
+    nll[nll.isnan()] = 0
+    nll[nll.isinf()] = 0
+
+    nll = torch.sum(nll * (1 - masks), dim=1) / torch.sum((1 - masks), dim=1)
+    # Note: Normalizing with torch.sum((1 - masks), dim=1) makes values somewhat comparable for trajectories of
+    # different lengths
+
+    return nll
+
+class MVNLoss(torch.nn.Module):
     """Multiple Scope Average Displacement Error
     mulADE: The average L2 distance between the best forecasted trajectory and the ground truth.
             The best here refers to the trajectory that has the minimum endpoint error.
@@ -27,7 +62,7 @@ class mulADE(torch.nn.Module):
         with_grad: bool = False,
         history_length: int = 21,
         whole_length: int = 101,
-        mul_ade_loss: list[str]=['phase_loss', 'angle_loss', 'scale_loss', 'v_loss'],
+        mul_ade_loss: list[str]=['phase_loss', 'scale_loss'],
     ) -> None:
         super().__init__()
         self.k = k
@@ -63,74 +98,26 @@ class mulADE(torch.nn.Module):
         #             print_keys(v, pfix+">> ")
         # print_keys(data)
         error = torch.tensor(0.0, device=outputs["trajectory"].device)
-        history = data['agent']['velocity'][:, 0, :self.history_length, :2]
+        if 'mvn' not in outputs:
+            return error
+        history = data['agent']['trajectories'][:, 0, :self.history_length, :2]
         self.mask = self.mask.to(outputs["trajectory"].device)
         b,r,m,t,dim = outputs["trajectory"].shape
         trajectories = outputs["trajectory"].reshape(b, r*m, t, dim)
         probabilities = outputs["probability"].reshape(b, r*m)
+        mvn = outputs["mvn"].reshape(b, r*m, t, -1)
 
         
         pred, _ = sort_predictions(trajectories, probabilities, k=self.k)
-        pred = pred[:,0,:,-2:]
-        pred = torch.cat([history, pred], dim=-2)
+        pred= pred[:,:self.k,:,:2]
         pred = pred.permute(0, 2, 1)
+        mvn, _ = sort_predictions(mvn, probabilities, k=self.k)
 
-        target = data['agent']['velocity'][:,0,:,:2]
-        # target = torch.cat([history, target], dim=-2)
+        target = data['agent']['trajectory'][:,0,:,:2]
         target = target.permute(0, 2, 1)
 
-        pred_coeff,_ = ptwt.cwt(pred, self.widths, self.wavelet, sampling_period=self.dt)
-        pred_coeff = pred_coeff.permute(1, 0, 3, 2)
-
-        target_coeff,_ = ptwt.cwt(target, self.widths, self.wavelet, sampling_period=self.dt)
-        target_coeff = target_coeff.permute(1, 0, 3, 2)
-        if 'phase_loss' in self.mul_ade_loss:
-            pred_coeff_angle = pred_coeff
-            target_coeff_angle = target_coeff
-            angle_error = torch.norm(
-                pred_coeff_angle - target_coeff_angle, p=2, dim=-1
-            )
-            angle_error = angle_error*self.mask
-            angle_error = angle_error.sum(-1)/self.mask.sum(-1)
-            angle_error = angle_error.mean(-1)
-            error += angle_error.mean()
-
-        if 'angle_loss' in self.mul_ade_loss:
-            pred_coeff_angle = torch.angle(pred_coeff)
-            target_coeff_angle = torch.angle(target_coeff)
-            angle_error = torch.norm(
-                pred_coeff_angle - target_coeff_angle, p=2, dim=-1
-            )
-            angle_error = angle_error*self.mask
-            angle_error = angle_error.sum(-1)/self.mask.sum(-1)
-            angle_error = angle_error.mean(-1)
-            error += angle_error.mean()
-
-        if 'scale_loss' in self.mul_ade_loss:
-            pred_coeff_real = torch.real(pred_coeff)
-            target_coeff_real = torch.real(target_coeff)
-            scale_error = torch.norm(
-                pred_coeff_real - target_coeff_real, p=2, dim=-1
-            )
-            scale_error = scale_error*self.mask
-            scale_error = scale_error.sum(-1)/self.mask.sum(-1)
-            scale_error = scale_error.mean(-1)
-            error += scale_error.mean()            
-
-        # if 'detail_loss' in self.mul_ade_loss:
-        details = outputs["details"]
-        if not len(details) == 0:
-            level = len(details)
-            packet = ptwt.wavedec(target[...,self.history_length:], 'haar', level = level-1, mode = 'constant')
-            for p, d in zip(packet, details):
-                b, r, m, t, dim = d.shape
-                d = d.reshape(b, r*m, t, dim)
-                d, _ = sort_predictions(d, probabilities, k=self.k)
-                d = d[:,0,:,:2]
-                d = d.permute(0, 2, 1)
-                interval = (self.whole_length - self.history_length) // p.shape[-1]
-                d = d[...,::interval]
-                error += torch.norm(d-p[...,:d.shape[-1]], p=2, dim=-2)[...,:10].mean()
+        ### NLL loss
+        error += mvn_loss(torch.cat([pred, mvn], dim=-1), target, self.mask)
             
         return error
 

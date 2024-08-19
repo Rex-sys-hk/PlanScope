@@ -15,7 +15,7 @@ from nuplan.planning.training.modeling.types import (
 from torch.optim import Optimizer
 from torch.optim.lr_scheduler import _LRScheduler
 from torchmetrics import MetricCollection
-from src.metrics import MR, minADE, minFDE, mulADE
+from src.metrics import MR, minADE, minFDE, mulADE, MVNLoss
 from src.metrics.prediction_avg_ade import PredAvgADE
 from src.metrics.prediction_avg_fde import PredAvgFDE
 from src.optim.warmup_cos_lr import WarmupCosLR
@@ -78,6 +78,8 @@ class LightningTrainer(pl.LightningModule):
         self.weights = torch.autograd.Variable(torch.ones(6).to(self.device), requires_grad=True)
         self.loss_scaler = torch.autograd.Variable(torch.tensor(6.0).to(self.device), requires_grad=True)
         self.dynamic_weight = dynamic_weight
+
+        self.mvn_loss = MVNLoss(k=3, with_grad=True).to(self.device)
 
     def on_fit_start(self) -> None:
         metrics_collection = MetricCollection(
@@ -164,7 +166,7 @@ class LightningTrainer(pl.LightningModule):
         # prediction loss
         prediction_loss = self.get_prediction_loss(
             data, prediction, valid_mask[:, 1:], target[:, 1:]
-        )
+        ) if 'mvn' not in res.keys() else self.mvn_loss(res, data)
 
         if self.training and self.use_contrast_loss:
             contrastive_loss = self._compute_contrastive_loss(

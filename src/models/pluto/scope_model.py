@@ -47,6 +47,7 @@ class PlanningModel(TorchModuleWrapper):
         cat_x=False,
         ref_free_traj=False,
         recursive_decoder:bool=False,
+        mvn_loss=False,
         feature_builder: PlutoFeatureBuilder = PlutoFeatureBuilder(),
     ) -> None:
         super().__init__(
@@ -113,6 +114,10 @@ class PlanningModel(TorchModuleWrapper):
             self.ref_free_decoder = MLPLayer(dim, 2 * dim, future_steps * 4)
 
         self.apply(self._init_weights)
+
+        self.mvn_loss = mvn_loss
+        if self.mvn_loss:
+            self.mvn_decoder = MLPLayer(dim, 3 * dim, future_steps * 4)
 
     def _init_weights(self, m):
         if isinstance(m, nn.Linear):
@@ -189,6 +194,10 @@ class PlanningModel(TorchModuleWrapper):
                 bs, self.future_steps, 4
             )
             out["ref_free_trajectory"] = ref_free_traj
+
+        if self.mvn_loss:
+            mvn = self.mvn_decoder(x[:, 1:]).reshape(bs, self.future_steps, 3)
+            out["mvn"] = mvn
 
         if not self.training:
             if self.ref_free_traj:

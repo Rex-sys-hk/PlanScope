@@ -58,6 +58,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python run_training.py \
   
 
 
+  # checkpoint=/workspace/pluto/exp/exp/training/scope/2024.08.15.14.58.26/checkpoints/last.ckpt \
   # checkpoint=/workspace/pluto/exp/exp/training/scope/2024.08.13.23.56.31/checkpoints/last.ckpt \
   # model.use_hidden_proj=true +custom_trainer.use_contrast_loss=true \
   # cache.cache_path=/nuplan/exp/sanity_check \
