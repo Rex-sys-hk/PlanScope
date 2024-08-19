@@ -78,6 +78,11 @@ class mulADE(torch.nn.Module):
         target = data['agent']['velocity'][:,0,:,:2]
         # target = torch.cat([history, target], dim=-2)
         target = target.permute(0, 2, 1)
+        if 'v_loss' in self.mul_ade_loss:
+            v_error = torch.norm(
+                pred - target, p=2, dim=-1
+            )
+            error += v_error[...,self.history_length:].mean()
 
         pred_coeff,_ = ptwt.cwt(pred, self.widths, self.wavelet, sampling_period=self.dt)
         pred_coeff = pred_coeff.permute(1, 0, 3, 2)
