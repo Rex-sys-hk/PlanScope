@@ -28,6 +28,7 @@ class mulADE(torch.nn.Module):
         history_length: int = 21,
         whole_length: int = 101,
         mul_ade_loss: list[str]=['phase_loss', 'angle_loss', 'scale_loss', 'v_loss'],
+        max_horizon: int = 10,
     ) -> None:
         super().__init__()
         self.k = k
@@ -54,6 +55,7 @@ class mulADE(torch.nn.Module):
         self.mask = self.mask.flip(0)
         self.mask = self.mask.unsqueeze(0)
         self.mul_ade_loss = mul_ade_loss
+        self.max_horizon = max_horizon
 
     def compute_dis(self, outputs: Dict[str, torch.Tensor], data: Dict[str, torch.Tensor]):
         # def print_keys(d:Dict, pfix=">> "):
@@ -135,7 +137,7 @@ class mulADE(torch.nn.Module):
                 d = d.permute(0, 2, 1)
                 interval = (self.whole_length - self.history_length) // p.shape[-1]
                 d = d[...,::interval]
-                error += torch.norm(d-p[...,:d.shape[-1]], p=2, dim=-2)[...,:10].mean()
+                error += torch.norm(d-p[...,:d.shape[-1]], p=2, dim=-2)[...,:self.max_horizon].mean()
             
         return error
 
