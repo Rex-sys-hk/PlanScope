@@ -40,7 +40,8 @@ class LightningTrainer(pl.LightningModule):
         regulate_yaw=False,
         objective_aggregate_mode: str = "mean",
         mul_ade_loss: list[str] = ['phase_loss', 'scale_loss'],
-        dynamic_weight: bool = True
+        dynamic_weight: bool = True,
+        max_horizon: int = 10,
     ) -> None:
         """
         Initializes the class.
@@ -74,7 +75,7 @@ class LightningTrainer(pl.LightningModule):
 
         if use_collision_loss:
             self.collision_loss = ESDFCollisionLoss()
-        self.mul_ade = mulADE(k=1, with_grad=True, mul_ade_loss=mul_ade_loss).to(self.device)
+        self.mul_ade = mulADE(k=1, with_grad=True, mul_ade_loss=mul_ade_loss, max_horizon=max_horizon).to(self.device)
         self.weights = torch.autograd.Variable(torch.ones(6).to(self.device), requires_grad=True)
         self.loss_scaler = torch.autograd.Variable(torch.tensor(6.0).to(self.device), requires_grad=True)
         self.dynamic_weight = dynamic_weight

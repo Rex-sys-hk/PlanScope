@@ -72,3 +72,5 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python run_training.py \
   # checkpoint=/workspace/pluto/exp/exp/training/scope/2024.08.07.18.26.11/checkpoints/last.ckpt
   # checkpoint=/workspace/PlanScope/exp/exp/training/planTF/2024.08.02.04.22.41/checkpoints/last.ckpt \
   # cache.cache_path=$WS/exp/cache_plantf_1M \
+
+  # Processing scope_full_recursive_h20
