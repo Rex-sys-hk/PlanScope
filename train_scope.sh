@@ -31,6 +31,7 @@ CUDA_VISIBLE_DEVICES=0 python run_training.py \
   +custom_trainer.mul_ade_loss=[] \
   +custom_trainer.max_horizon=40 \
   +custom_trainer.dynamic_weight=false \
+  +model.wtd_with_history=false \
   model.recursive_decoder=true \
   model.cat_x=true model.ref_free_traj=true \
   &&
@@ -55,8 +56,10 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python run_training.py \
   +custom_trainer.mul_ade_loss=[] \
   +custom_trainer.max_horizon=40 \
   +custom_trainer.dynamic_weight=false \
+  +model.wtd_with_history=false \
   model.recursive_decoder=true \
   model.cat_x=true model.ref_free_traj=true \
+  checkpoint=/workspace/pluto/exp/exp/training/scope/2024.08.30.10.50.18/checkpoints/last.ckpt \
   &&
 
   echo "====Training End===="

@@ -30,6 +30,7 @@ class mulADE(torch.nn.Module):
         mul_ade_loss: list[str]=['phase_loss', 'angle_loss', 'scale_loss', 'v_loss'],
         max_horizon: int = 10,
         mul_norm: bool = False,
+        wtd_with_history: bool = False,
     ) -> None:
         super().__init__()
         self.k = k
@@ -58,6 +59,7 @@ class mulADE(torch.nn.Module):
         self.mul_ade_loss = mul_ade_loss
         self.max_horizon = max_horizon
         self.mul_norm = mul_norm
+        self.wtd_with_history = wtd_with_history
 
     def compute_dis(self, outputs: Dict[str, torch.Tensor], data: Dict[str, torch.Tensor]):
         # def print_keys(d:Dict, pfix=">> "):
@@ -132,18 +134,23 @@ class mulADE(torch.nn.Module):
             effective_num = 0
             detail_loss = torch.tensor(0.0, device=outputs["trajectory"].device)
             level = len(details)
+            if not self.wtd_with_history:
+                target = target[...,self.history_length:]
             packet = ptwt.wavedec(target, 'haar', level = level-1, mode = 'constant')
+            # packet = ptwt.cwt(target, self.widths, self.wavelet, sampling_period=self.dt).to_list()
             for p, d in zip(packet, details):
-                print(p.shape, d.shape)
                 b, r, m, t, dim = d.shape
                 d = d.reshape(b, r*m, t, dim)
                 d, _ = sort_predictions(d, probabilities, k=self.k)
                 d = d[:,0,:,:2]
                 d = d.permute(0, 2, 1)
-                interval = self.whole_length // p.shape[-1]
+                interval = round(self.whole_length / p.shape[-1])
+                history_points = self.history_length // interval
                 d = d[...,::interval]
-                print('processed shape:', p.shape, d.shape)
-                e=torch.norm(d-p[...,:d.shape[-1]], p=2, dim=-2)[...,:self.max_horizon]
+                horizon = history_points + self.max_horizon
+                if not self.wtd_with_history:
+                    horizon = self.max_horizon
+                e=torch.norm(d[...,:p.shape[-1]]-p[...,:d.shape[-1]], p=2, dim=-2)[...,:horizon]
                 if self.mul_norm:
                     effective_num += e.shape[-1]
                     detail_loss += e.sum()
