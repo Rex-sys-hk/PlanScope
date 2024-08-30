@@ -48,6 +48,7 @@ class PlanningModel(TorchModuleWrapper):
         ref_free_traj=False,
         recursive_decoder:bool=False,
         mvn_loss=False,
+        wtd_with_history=False,
         feature_builder: PlutoFeatureBuilder = PlutoFeatureBuilder(),
     ) -> None:
         super().__init__(
@@ -104,6 +105,7 @@ class PlanningModel(TorchModuleWrapper):
             future_steps=future_steps,
             history_steps=history_steps,
             recursive_decoder=recursive_decoder,
+            wtd_with_history=wtd_with_history,
         )
 
         if use_hidden_proj:
