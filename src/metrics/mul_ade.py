@@ -132,15 +132,17 @@ class mulADE(torch.nn.Module):
             effective_num = 0
             detail_loss = torch.tensor(0.0, device=outputs["trajectory"].device)
             level = len(details)
-            packet = ptwt.wavedec(target[...,self.history_length:], 'haar', level = level-1, mode = 'constant')
+            packet = ptwt.wavedec(target, 'haar', level = level-1, mode = 'constant')
             for p, d in zip(packet, details):
+                print(p.shape, d.shape)
                 b, r, m, t, dim = d.shape
                 d = d.reshape(b, r*m, t, dim)
                 d, _ = sort_predictions(d, probabilities, k=self.k)
                 d = d[:,0,:,:2]
                 d = d.permute(0, 2, 1)
-                interval = (self.whole_length - self.history_length) // p.shape[-1]
+                interval = self.whole_length // p.shape[-1]
                 d = d[...,::interval]
+                print('processed shape:', p.shape, d.shape)
                 e=torch.norm(d-p[...,:d.shape[-1]], p=2, dim=-2)[...,:self.max_horizon]
                 if self.mul_norm:
                     effective_num += e.shape[-1]

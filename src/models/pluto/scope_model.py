@@ -102,6 +102,7 @@ class PlanningModel(TorchModuleWrapper):
             dropout=dropout,
             cat_x=cat_x,
             future_steps=future_steps,
+            history_steps=history_steps,
             recursive_decoder=recursive_decoder,
         )
 

@@ -96,6 +96,7 @@ class HierachicalDecoder(nn.Module):
         mlp_ratio,
         dropout,
         future_steps,
+        history_steps,
         yaw_constraint=False,
         cat_x=False,
         recursive_decoder: bool = False,
@@ -104,6 +105,7 @@ class HierachicalDecoder(nn.Module):
 
         self.num_mode = num_mode
         self.future_steps = future_steps
+        self.history_steps = history_steps
         self.yaw_constraint = yaw_constraint
         self.cat_x = cat_x
 
@@ -134,7 +136,7 @@ class HierachicalDecoder(nn.Module):
         nn.init.normal_(self.m_pos, mean=0.0, std=0.01)
         self.recursive_decoder = recursive_decoder
         if recursive_decoder:
-            self.detail_head = MLPLayer(dim, 2 * dim, self.future_steps * 2)
+            self.detail_head = MLPLayer(dim, 2 * dim, (self.future_steps+self.history_steps) * 2)
 
     def forward(self, data, enc_data):
         enc_emb = enc_data["enc_emb"]
@@ -205,7 +207,7 @@ class HierachicalDecoder(nn.Module):
                 assert torch.isfinite(r).all()
                 # detail_loc = self.detail_head(r).view(bs, R, self.num_mode, self.future_steps, 2)
                 # detail_yaw = self.detail_head(r).view(bs, R, self.num_mode, self.future_steps, 2)
-                detail_vel = self.detail_head(r).view(bs, R, self.num_mode, self.future_steps, 2)
+                detail_vel = self.detail_head(r).view(bs, R, self.num_mode, self.future_steps+self.history_steps, 2)
                 # detail = torch.cat([detail_loc, detail_yaw, detail_vel], dim=-1)
                 detail = detail_vel
                 details.append(detail)
