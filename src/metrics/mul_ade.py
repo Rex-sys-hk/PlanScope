@@ -29,6 +29,7 @@ class mulADE(torch.nn.Module):
         whole_length: int = 101,
         mul_ade_loss: list[str]=['phase_loss', 'angle_loss', 'scale_loss', 'v_loss'],
         max_horizon: int = 10,
+        mul_norm: bool = False,
     ) -> None:
         super().__init__()
         self.k = k
@@ -56,6 +57,7 @@ class mulADE(torch.nn.Module):
         self.mask = self.mask.unsqueeze(0)
         self.mul_ade_loss = mul_ade_loss
         self.max_horizon = max_horizon
+        self.mul_norm = mul_norm
 
     def compute_dis(self, outputs: Dict[str, torch.Tensor], data: Dict[str, torch.Tensor]):
         # def print_keys(d:Dict, pfix=">> "):
@@ -127,6 +129,8 @@ class mulADE(torch.nn.Module):
         # if 'detail_loss' in self.mul_ade_loss:
         details = outputs["details"]
         if not len(details) == 0:
+            effective_num = 0
+            detail_loss = torch.tensor(0.0, device=outputs["trajectory"].device)
             level = len(details)
             packet = ptwt.wavedec(target[...,self.history_length:], 'haar', level = level-1, mode = 'constant')
             for p, d in zip(packet, details):
@@ -137,7 +141,14 @@ class mulADE(torch.nn.Module):
                 d = d.permute(0, 2, 1)
                 interval = (self.whole_length - self.history_length) // p.shape[-1]
                 d = d[...,::interval]
-                error += torch.norm(d-p[...,:d.shape[-1]], p=2, dim=-2)[...,:self.max_horizon].mean()
+                e=torch.norm(d-p[...,:d.shape[-1]], p=2, dim=-2)[...,:self.max_horizon]
+                if self.mul_norm:
+                    effective_num += e.shape[-1]
+                    detail_loss += e.sum()
+                else:
+                    effective_num += 1
+                    detail_loss += e.mean()
+            error += detail_loss/effective_num
             
         return error
 
