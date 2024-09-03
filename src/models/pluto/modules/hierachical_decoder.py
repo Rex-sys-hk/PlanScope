@@ -210,9 +210,8 @@ class HierachicalDecoder(nn.Module):
                 assert torch.isfinite(r).all()
                 # detail_loc = self.detail_head(r).view(bs, R, self.num_mode, self.future_steps, 2)
                 # detail_yaw = self.detail_head(r).view(bs, R, self.num_mode, self.future_steps, 2)
-                detail_vel = self.detail_head(r).view(bs, R, self.num_mode, self.time_steps, 2)
+                detail = self.detail_head(r).view(bs, R, self.num_mode, self.time_steps, 2)
                 # detail = torch.cat([detail_loc, detail_yaw, detail_vel], dim=-1)
-                detail = detail_vel
                 details.append(detail)
 
 

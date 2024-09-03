@@ -42,6 +42,10 @@ class LightningTrainer(pl.LightningModule):
         mul_ade_loss: list[str] = ['phase_loss', 'scale_loss'],
         dynamic_weight: bool = True,
         max_horizon: int = 10,
+        learning_output: str = 'velocity',
+        init_weights: list[float] = [1, 1, 1, 1, 1, 1],
+        wavelet: list[str] = ['cgau1', 'constant', 'bior1.3', 'constant'],
+        wtd_with_history: bool = False,
     ) -> None:
         """
         Initializes the class.
@@ -75,9 +79,15 @@ class LightningTrainer(pl.LightningModule):
 
         if use_collision_loss:
             self.collision_loss = ESDFCollisionLoss()
-        self.mul_ade = mulADE(k=1, with_grad=True, mul_ade_loss=mul_ade_loss, max_horizon=max_horizon).to(self.device)
-        self.weights = torch.autograd.Variable(torch.ones(6).to(self.device), requires_grad=True)
-        self.loss_scaler = torch.autograd.Variable(torch.tensor(6.0).to(self.device), requires_grad=True)
+        self.mul_ade = mulADE(k=1, 
+                              with_grad=True,
+                              mul_ade_loss=mul_ade_loss, 
+                              max_horizon=max_horizon, 
+                              learning_output=learning_output,
+                              wtd_with_history=wtd_with_history,
+                              wavelet=wavelet
+                              ).to(self.device)
+        self.weights = torch.autograd.Variable(torch.tensor(init_weights).to(self.device), requires_grad=True)
         self.dynamic_weight = dynamic_weight
 
         self.mvn_loss = MVNLoss(k=3, with_grad=True).to(self.device)
@@ -179,13 +189,13 @@ class LightningTrainer(pl.LightningModule):
         scope_loss = self.mul_ade(res, data)
 
         loss = (
-            ego_reg_loss
-            + ego_cls_loss
-            + prediction_loss
+            ego_reg_loss*self.weights[0]
+            + ego_cls_loss*self.weights[1]
+            + prediction_loss*self.weights[2]
             + contrastive_loss
-            + collision_loss
-            + ego_ref_free_reg_loss
-            + scope_loss
+            + collision_loss*self.weights[3]
+            + ego_ref_free_reg_loss*self.weights[4]
+            + scope_loss*self.weights[5]
         )
         if self.training and self.dynamic_weight:
             self.losses = [ego_reg_loss, 

@@ -100,7 +100,7 @@ class MVNLoss(torch.nn.Module):
         error = torch.tensor(0.0, device=outputs["trajectory"].device)
         if 'mvn' not in outputs:
             return error
-        history = data['agent']['trajectories'][:, 0, :self.history_length, :2]
+
         self.mask = self.mask.to(outputs["trajectory"].device)
         b,r,m,t,dim = outputs["trajectory"].shape
         trajectories = outputs["trajectory"].reshape(b, r*m, t, dim)
@@ -113,7 +113,7 @@ class MVNLoss(torch.nn.Module):
         pred = pred.permute(0, 2, 1)
         mvn, _ = sort_predictions(mvn, probabilities, k=self.k)
 
-        target = data['agent']['trajectory'][:,0,:,:2]
+        target = data['agent']['position'][:,0,:,:2]
         target = target.permute(0, 2, 1)
 
         ### NLL loss
