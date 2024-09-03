@@ -37,7 +37,7 @@ CUDA_VISIBLE_DEVICES=0 python run_training.py \
   model.recursive_decoder=true \
   +custom_trainer.learning_output='velocity' \
   +custom_trainer.init_weights=[1.0,1.0,1.0,1.0,1.0,1.0] \
-  +custom_trainer.wavelet=['cgau1', 'constant', 'haar', 'constant'] \
+  +custom_trainer.wavelet=['cgau1','constant','haar','constant'] \
   &&
   
   # +custom_trainer.use_contrast_loss=true model.use_hidden_proj=true \
@@ -62,11 +62,11 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python run_training.py \
   +custom_trainer.mul_ade_loss=[] \
   +custom_trainer.max_horizon=30 \
   +custom_trainer.dynamic_weight=false \
-  +model.wtd_with_history=false \
+  +model.wtd_with_history=false +custom_trainer.wtd_with_history=false \
   model.recursive_decoder=true \
   +custom_trainer.learning_output='velocity' \
   +custom_trainer.init_weights=[1.0,1.0,1.0,1.0,1.0,1.0] \
-  +custom_trainer.wavelet=['cgau1', 'constant', 'haar', 'constant'] \
+  +custom_trainer.wavelet=['cgau1','constant','haar','constant'] \
   &&
 
   echo "====Training End===="
