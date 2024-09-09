@@ -22,7 +22,7 @@ export NUPLAN_EXP_ROOT="$WS/exp"
 
 echo "====Start Sanity Check====" &&
 
-CUDA_VISIBLE_DEVICES=0 python run_training.py \
+CUDA_VISIBLE_DEVICES=4 python run_training.py \
   py_func=train +training=train_scope \
   worker=single_machine_thread_pool worker.max_workers=4 \
   epochs=2 warmup_epochs=1 \
@@ -31,20 +31,21 @@ CUDA_VISIBLE_DEVICES=0 python run_training.py \
   model.cat_x=true model.ref_free_traj=true \
   +custom_trainer.use_contrast_loss=false model.use_hidden_proj=false \
   +custom_trainer.mul_ade_loss=[] \
-  +custom_trainer.max_horizon=30 \
+  +custom_trainer.max_horizon=20 \
   +custom_trainer.dynamic_weight=false \
-  +model.wtd_with_history=false +custom_trainer.wtd_with_history=false \
+  +model.wtd_with_history=true +custom_trainer.wtd_with_history=true \
   model.recursive_decoder=true \
+  model.future_steps=80 \
   +custom_trainer.learning_output='velocity' \
   +custom_trainer.init_weights=[1.0,1.0,1.0,1.0,1.0,1.0] \
-  +custom_trainer.wavelet=['cgau1','constant','haar','constant'] \
+  +custom_trainer.wavelet=['cgau1','constant','bior1.3','constant'] \
   &&
   
   # +custom_trainer.use_contrast_loss=true model.use_hidden_proj=true \
 
 echo "====Start training====" &&
 
-CUDA_VISIBLE_DEVICES=0,1,2,3 python run_training.py \
+CUDA_VISIBLE_DEVICES=4,5,6,7 python run_training.py \
   py_func=train +training=train_scope \
   worker=single_machine_thread_pool worker.max_workers=32 \
   scenario_builder=nuplan \
@@ -60,13 +61,14 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python run_training.py \
   model.cat_x=true model.ref_free_traj=true \
   +custom_trainer.use_contrast_loss=false model.use_hidden_proj=false \
   +custom_trainer.mul_ade_loss=[] \
-  +custom_trainer.max_horizon=30 \
+  +custom_trainer.max_horizon=20 \
   +custom_trainer.dynamic_weight=false \
-  +model.wtd_with_history=false +custom_trainer.wtd_with_history=false \
+  +model.wtd_with_history=true +custom_trainer.wtd_with_history=true \
   model.recursive_decoder=true \
+  model.future_steps=80 \
   +custom_trainer.learning_output='velocity' \
   +custom_trainer.init_weights=[1.0,1.0,1.0,1.0,1.0,1.0] \
-  +custom_trainer.wavelet=['cgau1','constant','haar','constant'] \
+  +custom_trainer.wavelet=['cgau1','constant','bior1.3','constant'] \
   &&
 
   echo "====Training End===="

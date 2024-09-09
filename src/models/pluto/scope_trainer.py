@@ -91,6 +91,8 @@ class LightningTrainer(pl.LightningModule):
         self.dynamic_weight = dynamic_weight
 
         self.mvn_loss = MVNLoss(k=3, with_grad=True).to(self.device)
+        print('WARNING: Overall future time horizon is set to 80')
+        self.OT = 80
 
     def on_fit_start(self) -> None:
         metrics_collection = MetricCollection(
@@ -142,11 +144,10 @@ class LightningTrainer(pl.LightningModule):
             res["prediction"][:train_num],
         )
         ref_free_trajectory = res.get("ref_free_trajectory", None)
-
-        targets_pos = data["agent"]["target"][:train_num]
-        valid_mask = data["agent"]["valid_mask"][:train_num, :, -T:]
-        targets_vel = data["agent"]["velocity"][:train_num, :, -T:]
-
+        end = -self.OT+T if T < self.OT else None
+        targets_pos = data["agent"]["target"][:train_num, :, -self.OT:end]
+        valid_mask = data["agent"]["valid_mask"][:train_num, :, -self.OT:end]
+        targets_vel = data["agent"]["velocity"][:train_num, :, -self.OT:end]
         target = torch.cat(
             [
                 targets_pos[..., :2],

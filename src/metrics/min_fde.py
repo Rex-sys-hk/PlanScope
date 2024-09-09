@@ -34,7 +34,7 @@ class minFDE(Metric):
                 outputs["trajectory"], outputs["probability"], k=self.k
             )
             fde = torch.norm(
-                pred[..., -1, :2] - target.unsqueeze(1)[..., -1, :2], p=2, dim=-1
+                pred[..., -1, :2] - target.unsqueeze(1)[..., pred.shape[-2]-1, :2], p=2, dim=-1
             )
             min_fde = fde.min(-1)[0]
             self.sum += min_fde.sum()

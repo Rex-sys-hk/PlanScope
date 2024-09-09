@@ -37,8 +37,9 @@ class PredAvgADE(Metric):
         with torch.no_grad():
             prediction, valid_mask = outputs["prediction"], outputs["valid_mask"]
             target = outputs["prediction_target"]
+            valid_mask = valid_mask[...,:prediction.shape[-2]]
             ade = (
-                torch.norm(prediction - target[..., :2], p=2, dim=-1) * valid_mask
+                torch.norm(prediction - target[..., :prediction.shape[-2], :2], p=2, dim=-1) * valid_mask
             ).sum(-1) / (valid_mask.sum(-1) + 1e-6)
 
             self.sum += ade.sum()

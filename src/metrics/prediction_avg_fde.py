@@ -37,9 +37,9 @@ class PredAvgFDE(Metric):
         with torch.no_grad():
             prediction, valid_mask = outputs["prediction"], outputs["valid_mask"]
             target = outputs["prediction_target"]
-            endpoint_mask = valid_mask[..., -1].float()
+            endpoint_mask = valid_mask[..., prediction.shape[-2]-1].float()
             fde = (
-                torch.norm(prediction[..., -1, :2] - target[..., -1, :2], p=2, dim=-1)
+                torch.norm(prediction[..., -1, :2] - target[..., prediction.shape[-2]-1, :2], p=2, dim=-1)
                 * endpoint_mask
             ).sum(-1)
 

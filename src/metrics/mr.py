@@ -31,7 +31,7 @@ class MR(Metric):
             pred = outputs["trajectory"]
             missed_pred = (
                 torch.norm(
-                    pred[..., -1, :2] - target.unsqueeze(1)[..., -1, :2], p=2, dim=-1
+                    pred[..., -1, :2] - target.unsqueeze(1)[..., pred.shape[-2]-1, :2], p=2, dim=-1
                 )
                 > self.miss_threshold
             )
