@@ -7,6 +7,8 @@ from .utils import sort_predictions
 import ptwt
 import pywt
 
+import matplotlib.pyplot as plt
+import matplotlib.ticker as mtick
 
 class mulADE(torch.nn.Module):
     """Multiple Scope Average Displacement Error
@@ -109,6 +111,7 @@ class mulADE(torch.nn.Module):
         return error
 
     def dwt_loss(self, details, target, probabilities, device, wavelet='haar', mode='constant'):
+        self.visualize(details, target, probabilities, False)
         effective_num = 0
         detail_loss = torch.tensor(0.0).to(device)
         level = len(details)
@@ -201,3 +204,46 @@ class mulADE(torch.nn.Module):
         with torch.no_grad():
             return self.compute_dis(outputs, data)
 
+    def visualize(self, details, target, probabilities, VISULIZE):
+        if not VISULIZE:
+            return
+        level = len(details)
+        max_h = 6
+        # target = data['agent'][self.learning_output][:,0,:,:2]
+        target = target.permute(0, 2, 1)
+        if not self.wtd_with_history:
+            target = target[...,self.history_length:]
+        packet = ptwt.wavedec(target, 'haar', level = level-1, mode = 'constant')
+        xs = torch.arange(1, self.whole_length-self.history_length + 1, 1)
+        plt.rcParams['font.family'] = 'serif'
+        plt.rcParams['font.serif'] = ['Times New Roman'] + plt.rcParams['font.serif']
+        plt.rcParams['font.size'] = 12.
+        plt.figure(figsize=(10, 8), dpi=300)
+        ax = plt.subplot(level+1, 1, 1)
+        ax.plot(xs[::2**0], target[0,0,:].cpu(), label='Original GT Velocity')
+        ax.legend(loc='upper right')
+        ax.ticklabel_format(style='sci', scilimits=(0,0), axis='y')
+        ax.yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1f'))
+        ax.set_ylabel(f'v mag')
+        
+        for l in range(1, level):
+            ax = plt.subplot(level+1, 1, l+1, sharex=ax)
+            ax.plot(xs[::2**l], packet[level-l][0,0,:].cpu(), label=f'L{l-1} Detail')
+            ax.plot(xs[::2**l][:max_h], packet[level-l][0,0,:].cpu()[:max_h], 'r+', markersize=12, label=f'L{l-1} Computed Points')
+            ax.legend(loc='upper right')
+            ax.ticklabel_format(style='sci', scilimits=(0,0), axis='y')
+            ax.yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1f'))
+            ax.set_ylabel(f'v mag')
+
+        ax = plt.subplot(level+1, 1, level+1, sharex=ax)
+        ax.plot(xs[::2**l], packet[0][0,0,:].cpu(), label=f'L{l-1} Approxity')
+        ax.plot(xs[::2**l][:max_h], packet[0][0,0,:].cpu()[:max_h], 'r+', markersize=12, label=f'L{l-1} Computed Points')
+        ax.legend(loc='upper right')
+        ax.ticklabel_format(style='sci', scilimits=(0,0), axis='y')
+        ax.yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1f'))
+        ax.set_ylabel(f'v mag')
+        ax.set_xlabel('Time Step')
+
+        plt.tight_layout()
+        plt.savefig('/workspace/details.pdf', format='pdf')
+        return

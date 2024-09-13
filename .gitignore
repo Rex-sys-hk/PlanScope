@@ -166,3 +166,5 @@ any_test.py
 exp/
 videos/
 sim_*.sh
+details.pdf
+.fuse*
