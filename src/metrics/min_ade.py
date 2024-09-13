@@ -39,7 +39,7 @@ class minADE(Metric):
                 outputs["trajectory"], outputs["probability"], k=self.k
             )
             ade = torch.norm(
-                pred[..., :2] - target.unsqueeze(1)[..., :2], p=2, dim=-1
+                pred[..., :2] - target.unsqueeze(1)[..., :pred.shape[-2], :2], p=2, dim=-1
             ).mean(-1)
             min_ade = ade.min(-1)[0]
             self.sum += min_ade.sum()

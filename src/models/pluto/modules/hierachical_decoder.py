@@ -101,6 +101,7 @@ class HierachicalDecoder(nn.Module):
         cat_x=False,
         recursive_decoder: bool = False,
         wtd_with_history: bool = False,
+        multihead_decoder: bool = False,
     ) -> None:
         super().__init__()
 
@@ -136,10 +137,20 @@ class HierachicalDecoder(nn.Module):
         nn.init.normal_(self.m_emb, mean=0.0, std=0.01)
         nn.init.normal_(self.m_pos, mean=0.0, std=0.01)
         self.recursive_decoder = recursive_decoder
+        self.multihead_decoder = multihead_decoder
         self.wtd_with_history = wtd_with_history
         self.time_steps = self.future_steps + self.history_steps if wtd_with_history else self.future_steps
         if recursive_decoder:
             self.detail_head = MLPLayer(dim, 2 * dim, self.time_steps * 2)
+        if multihead_decoder:
+            self.detail_head_0 = MLPLayer(dim, 2 * dim, self.time_steps * 2)
+            self.detail_head_1 = MLPLayer(dim, 2 * dim, self.time_steps * 2)
+            self.detail_head_2 = MLPLayer(dim, 2 * dim, self.time_steps * 2)
+            self.detail_head_3 = MLPLayer(dim, 2 * dim, self.time_steps * 2)
+            self.approximation_head = MLPLayer(dim, 2 * dim, self.time_steps * 2)
+            self.detail_decoders = [self.detail_head_0, self.detail_head_1, self.detail_head_2, self.detail_head_3, self.approximation_head]
+        if multihead_decoder and recursive_decoder:
+            raise ValueError("multihead_decoder and recursive_decoder should not be both True")
 
     def forward(self, data, enc_data):
         enc_emb = enc_data["enc_emb"]
@@ -213,6 +224,9 @@ class HierachicalDecoder(nn.Module):
                 detail = self.detail_head(r).view(bs, R, self.num_mode, self.time_steps, 2)
                 # detail = torch.cat([detail_loc, detail_yaw, detail_vel], dim=-1)
                 details.append(detail)
-
+        if self.multihead_decoder:
+            for decoder in self.detail_decoders:
+                detail = decoder(q).view(bs, R, self.num_mode, self.time_steps, 2)
+                details.append(detail)
 
         return traj, pi, details

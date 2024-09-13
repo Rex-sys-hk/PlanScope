@@ -161,14 +161,14 @@ class mulADE(torch.nn.Module):
         p_history = data['agent']['position'][:, 0, :self.history_length, :2]
         p_pred = torch.cat([p_history, p_pred], dim=-2)
         p_pred = p_pred.permute(0, 2, 1)
-        p_target = data['agent']['position'][:,0,:,:2]
+        p_target = data['agent']['position'][:,0,:p_pred.shape[-1],:2]
         p_target = p_target.permute(0, 2, 1)
 
         v_pred = pred[:,0,:,-2:]
         v_history = data['agent']['velocity'][:, 0, :self.history_length, :2]
         v_pred = torch.cat([v_history, v_pred], dim=-2)
         v_pred = v_pred.permute(0, 2, 1)
-        v_target = data['agent']['velocity'][:,0,:,:2]
+        v_target = data['agent']['velocity'][:,0,:v_pred.shape[-1],:2]
         v_target = v_target.permute(0, 2, 1)
 
         if 'v_loss' in self.mul_ade_loss:
