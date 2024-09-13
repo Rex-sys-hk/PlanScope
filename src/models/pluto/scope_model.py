@@ -47,6 +47,7 @@ class PlanningModel(TorchModuleWrapper):
         cat_x=False,
         ref_free_traj=False,
         recursive_decoder:bool=False,
+        multihead_decoder:bool=False,
         mvn_loss=False,
         wtd_with_history=False,
         feature_builder: PlutoFeatureBuilder = PlutoFeatureBuilder(),
@@ -105,6 +106,7 @@ class PlanningModel(TorchModuleWrapper):
             history_steps=history_steps,
             cat_x=cat_x,
             recursive_decoder=recursive_decoder,
+            multihead_decoder=multihead_decoder,
             wtd_with_history=wtd_with_history,
         )
 
