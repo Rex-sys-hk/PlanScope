@@ -11,9 +11,9 @@ This is the official repository of
 <a href="https://rex-sys-hk.github.io">
 <img src="https://img.shields.io/badge/Project-Page-blue?style=flat">
 </a>
-<a href='https://arxiv.org/abs/2404.14327' style='padding-left: 0.5rem;'>
+<!--<a href='https://arxiv.org/abs/2404.14327' style='padding-left: 0.5rem;'>
     <img src='https://img.shields.io/badge/arXiv-PDF-red?style=flat&logo=arXiv&logoColor=wihte' alt='arXiv PDF'>
-</a>
+</a>-->
 </p>
 
 ## Setup Environment
@@ -123,3 +123,7 @@ If you find this repo useful, please consider giving us a star 🌟 and citing o
   year={2024}
 }
 ```-->
+
+## Thanks
+- [tuplan](https://github.com/autonomousvision/tuplan_garage)
+- [pluto](https://github.com/jchengai/pluto)
