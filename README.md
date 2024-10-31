@@ -2,7 +2,7 @@
 
 This is the official repository of
 
-**PlanScope: Learning to Plan Within Decision Scope Does Matter**,
+**PlanScope: Learning to Plan Within Decision Scope Does Matter**
 
 [Ren Xin](https://rex-sys-hk.github.io), [Jie Cheng](https://jchengai.github.io/), and [Jun Ma](https://personal.hkust-gz.edu.cn/junma/index.html)
 
@@ -74,8 +74,6 @@ Then preprocess the whole nuPlan training set (this will take some time). You ma
 ```
 sh train_scope.sh
 ```
-
-- add option `model.use_hidden_proj=true +custom_trainer.use_contrast_loss=true` to enable CIL.
 
 - you can remove wandb related configurations if your prefer tensorboard.
 
