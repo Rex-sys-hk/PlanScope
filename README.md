@@ -80,7 +80,7 @@ sh train_scope.sh
 
 ## Checkpoint
 
-Download and place the checkpoint in the `pluto/checkpoints` folder.
+Download and place the checkpoint in the `checkpoints` folder.
 
 | Model            | Download |
 | ---------------- | -------- |
