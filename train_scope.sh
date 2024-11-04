@@ -4,21 +4,6 @@ export NUPLAN_MAPS_ROOT="/nuplan/dataset/maps"
 export WS="/workspace/pluto"
 export NUPLAN_EXP_ROOT="$WS/exp"
 
-# python run_training.py \
-#   py_func=cache +training=train_pluto \
-#   scenario_builder=nuplan_mini \
-#   cache.cache_path=$WS/exp/sanity_check \
-#   cache.cleanup_cache=true \
-#   scenario_filter=training_scenarios_tiny \
-#   worker=sequential &&
-   
-# python run_training.py \
-#   py_func=cache +training=train_pluto \
-#   scenario_builder=nuplan \
-#   cache.cache_path=$WS/exp/cache_pluto_1M \
-#   cache.cleanup_cache=true \
-#   scenario_filter=training_scenarios_1M \
-#   worker.threads_per_node=40
 
 echo "====Start Sanity Check====" &&
 
@@ -34,7 +19,7 @@ CUDA_VISIBLE_DEVICES=4 python run_training.py \
   +custom_trainer.max_horizon=20 \
   +custom_trainer.dynamic_weight=false \
   +model.wtd_with_history=false +custom_trainer.wtd_with_history=false \
-  model.recursive_decoder=false +model.multihead_decoder=true \
+  model.recursive_decoder=true +model.multihead_decoder=false \
   model.future_steps=80 \
   +custom_trainer.learning_output='velocity' \
   +custom_trainer.init_weights=[1.0,1.0,1.0,1.0,1.0,1.0] \
@@ -64,7 +49,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 python run_training.py \
   +custom_trainer.max_horizon=20 \
   +custom_trainer.dynamic_weight=false \
   +model.wtd_with_history=false +custom_trainer.wtd_with_history=false \
-  model.recursive_decoder=false +model.multihead_decoder=true \
+  model.recursive_decoder=true +model.multihead_decoder=false \
   model.future_steps=80 \
   +custom_trainer.learning_output='velocity' \
   +custom_trainer.init_weights=[1.0,1.0,1.0,1.0,1.0,1.0] \
