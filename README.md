@@ -8,7 +8,7 @@ This is the official repository of
 
 
 <p align="left">
-<a href="https://rex-sys-hk.github.io">
+<a href="https://rex-sys-hk.github.io/pub_webs/PlanScope/">
 <img src="https://img.shields.io/badge/Project-Page-blue?style=flat">
 </a>
 <a href='https://arxiv.org/abs/2411.00476' style='padding-left: 0.5rem;'>
