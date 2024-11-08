@@ -16,6 +16,8 @@ This is the official repository of
 </a>
 </p>
 
+![PlanScopeConcept](https://github.com/user-attachments/assets/c622cb18-8ebe-4b70-94c7-6d7a4c443260)
+
 
 ## Setup Environment
 
@@ -131,8 +133,8 @@ If you find this repo useful, please consider giving us a star 🌟 and citing o
 
 
 ## Special Announcement
-```
-This work investigates a technique to enhance the performance of planning models in a pure learning framework. We have deliberately omitted the rule-based pre- and post-processing modules from the baseline approach to mitigate the impact of artificially crafted rules, as claimed in our paper. A certain unauthorized publication led to inaccuracies in the depiction of its state-of-the-art (SOTA) capabilities. We hereby clarify this to prevent misunderstanding.
 
-Nevertheless, the method introduced in our article is worth trying and could potentially serve as an add-on to augment the performance of the models you are developing, especially when the dataset is small. We are open to sharing and discussing evaluation results to foster a collaborative exchange within the community.
-```
+This work investigates a technique to enhance the performance of planning models in a pure learning framework. We have deliberately omitted the rule-based pre- and post-processing modules from the baseline approach to mitigate the impact of artificially crafted rules, as claimed in our paper. A certain unauthorized publication led to **inaccuracies in the depiction of its state-of-the-art (SOTA) capabilities**. We hereby clarify this to prevent misunderstanding.
+
+Nevertheless, the method introduced in our article is worth trying and could potentially serve as an add-on to augment the performance of the models you are developing, especially when the dataset is small. We are open to sharing and discussing evaluation results to foster a collaborative exchange.
+
