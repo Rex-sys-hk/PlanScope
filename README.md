@@ -16,6 +16,7 @@ This is the official repository of
 </a>
 </p>
 
+
 ## Setup Environment
 
 ### Setup dataset
@@ -69,7 +70,6 @@ Then preprocess the whole nuPlan training set (this will take some time). You ma
 
 ## Training
 
-(The training part it not fully tested)
 
 ```
 sh train_scope.sh
@@ -85,9 +85,9 @@ Download and place the checkpoint in the `checkpoints` folder.
 | Model            | Download |
 | ---------------- | -------- |
 | Pluto-1M-aux-cil | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/jchengai_connect_ust_hk/EaFpLwwHFYVKsPVLH2nW5nEBNbPS7gqqu_Rv2V1dzODO-Q?e=LAZQcI)    |
-| Pluto-aux-nocil  |          |
-| PlanScope-h10    |          |
-| PlanScope-h20    |          |
+| Pluto-aux-nocil  | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EbdjCkpdTEBKhwnz4VFv0R8BDD0C76zHsV7BedgYlytV5g?e=vuDG7U)|
+| PlanScope-h10    | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EcxJsqO4QgxJt2HeyfmDEssBelkGmMqzq3pFkk2w5OgQDQ?e=bUem3P)|
+| PlanScope-h20    | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EbdjCkpdTEBKhwnz4VFv0R8BDD0C76zHsV7BedgYlytV5g?e=9BA7ft)|
 
 ## Run PlanScope-planner simulation
 
@@ -105,7 +105,7 @@ The code is under cleaning and will be released gradually.
 - [ ] improve docs
 - [x] training code
 - [x] visualization
-- [ ] Scope-planner & checkpoint
+- [x] Scope-planner & checkpoint
 - [x] feature builder & model
 - [x] initial repo & paper
 
@@ -113,15 +113,26 @@ The code is under cleaning and will be released gradually.
 
 If you find this repo useful, please consider giving us a star 🌟 and citing our related paper.
 
-<!--```bibtex
-@article{cheng2024pluto,
-  title={PLUTO: Pushing the Limit of Imitation Learning-based Planning for Autonomous Driving},
-  author={Cheng, Jie and Chen, Yingbing and Chen, Qifeng},
-  journal={arXiv preprint arXiv:2404.14327},
-  year={2024}
+```bibtex
+@misc{planscope,
+      title={{PlanScope:} Learning to Plan Within Decision Scope Does Matter}, 
+      author={Ren Xin and Jie Cheng and Jun Ma},
+      year={2024},
+      eprint={2411.00476},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2411.00476}, 
 }
-```-->
+```
 
 ## Thanks
 - [tuplan](https://github.com/autonomousvision/tuplan_garage)
 - [pluto](https://github.com/jchengai/pluto)
+
+
+## Special Announcement
+```
+This work investigates a technique to enhance the performance of planning models in a pure learning framework. We have deliberately omitted the rule-based pre- and post-processing modules from the baseline approach to mitigate the impact of artificially crafted rules, as claimed in our paper. A certain unauthorized publication led to inaccuracies in the depiction of its state-of-the-art (SOTA) capabilities. We hereby clarify this to prevent misunderstanding.
+
+Nevertheless, the method introduced in our article is worth trying and could potentially serve as an add-on to augment the performance of the models you are developing, especially when the dataset is small. We are open to sharing and discussing evaluation results to foster a collaborative exchange within the community.
+```

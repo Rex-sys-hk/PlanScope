@@ -58,16 +58,3 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 python run_training.py \
 
   echo "====Training End===="
   
-
-
-  # checkpoint=/workspace/pluto/exp/exp/training/scope/2024.08.30.10.50.18/checkpoints/last.ckpt \
-  # checkpoint=/workspace/pluto/exp/exp/training/scope/2024.08.15.14.58.26/checkpoints/last.ckpt \
-  # checkpoint=/workspace/pluto/exp/exp/training/scope/2024.08.15.15.02.13/checkpoints/last.ckpt \
-  # checkpoint=/workspace/pluto/exp/exp/training/scope/2024.08.13.23.56.31/checkpoints/last.ckpt \
-  # model.use_hidden_proj=true +custom_trainer.use_contrast_loss=true \
-  # cache.cache_path=/nuplan/exp/sanity_check \
-  # checkpoint=/workspace/pluto/exp/exp/training/scope/2024.08.07.18.26.11/checkpoints/last.ckpt
-  # checkpoint=/workspace/PlanScope/exp/exp/training/planTF/2024.08.02.04.22.41/checkpoints/last.ckpt \
-  # cache.cache_path=$WS/exp/cache_plantf_1M \
-
-  # Processing scope_0.2_recursive_h40
