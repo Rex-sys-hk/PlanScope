@@ -165,6 +165,6 @@ checkpoints/
 any_test.py
 exp/
 videos/
-sim_*.sh
+# sim_*.sh
 details.pdf
 .fuse*
