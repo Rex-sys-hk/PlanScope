@@ -100,6 +100,7 @@ class HierachicalDecoder(nn.Module):
         yaw_constraint=False,
         cat_x=False,
         recursive_decoder: bool = False,
+        independent_detokenizer: bool = False,
         wtd_with_history: bool = False,
         multihead_decoder: bool = False,
     ) -> None:
@@ -140,8 +141,12 @@ class HierachicalDecoder(nn.Module):
         self.multihead_decoder = multihead_decoder
         self.wtd_with_history = wtd_with_history
         self.time_steps = self.future_steps + self.history_steps if wtd_with_history else self.future_steps
+        self.independent_detokenizer = independent_detokenizer
         if recursive_decoder:
-            self.detail_head = MLPLayer(dim, 2 * dim, self.time_steps * 2)
+            if independent_detokenizer:
+                self.detail_head = nn.ModuleList([MLPLayer(dim, 2 * dim, self.time_steps * 2) for _ in range(decoder_depth+1)])
+            else:
+                self.detail_head = MLPLayer(dim, 2 * dim, self.time_steps * 2)
         if multihead_decoder:
             self.detail_head_0 = MLPLayer(dim, 2 * dim, self.time_steps * 2)
             self.detail_head_1 = MLPLayer(dim, 2 * dim, self.time_steps * 2)
@@ -217,13 +222,17 @@ class HierachicalDecoder(nn.Module):
 
         details = []
         if self.recursive_decoder:
-            for r in residual:
+            for i,r in enumerate(residual):
                 assert torch.isfinite(r).all()
                 # detail_loc = self.detail_head(r).view(bs, R, self.num_mode, self.future_steps, 2)
                 # detail_yaw = self.detail_head(r).view(bs, R, self.num_mode, self.future_steps, 2)
-                detail = self.detail_head(r).view(bs, R, self.num_mode, self.time_steps, 2)
-                # detail = torch.cat([detail_loc, detail_yaw, detail_vel], dim=-1)
-                details.append(detail)
+                if self.independent_detokenizer:
+                    detail = self.detail_head[i](r).view(bs, R, self.num_mode, self.time_steps, 2)
+                    details.append(detail)
+                else:
+                    detail = self.detail_head(r).view(bs, R, self.num_mode, self.time_steps, 2)
+                    # detail = torch.cat([detail_loc, detail_yaw, detail_vel], dim=-1)
+                    details.append(detail)
         if self.multihead_decoder:
             for decoder in self.detail_decoders:
                 detail = decoder(q).view(bs, R, self.num_mode, self.time_steps, 2)

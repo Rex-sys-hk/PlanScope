@@ -138,3 +138,5 @@ This work investigates a technique to enhance the performance of planning models
 
 Nevertheless, the method introduced in our article is worth trying and could potentially serve as an add-on to augment the performance of the models you are developing, especially when the dataset is small. We are open to sharing and discussing evaluation results to foster a collaborative exchange.
 
+## A common problem of nuPlan Dataset
+https://github.com/motional/nuplan-devkit/issues/379 

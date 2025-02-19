@@ -35,6 +35,7 @@ class mulADE(torch.nn.Module):
         wtd_with_history: bool = False,
         learning_output: str = 'velocity', # or 'velocity'
         wavelet: str = ['cgau1', 'constant', 'bior1.3', 'constant'],
+        approximation_norm: bool = False,
     ) -> None:
         super().__init__()
         self.k = k
@@ -68,6 +69,7 @@ class mulADE(torch.nn.Module):
         self.mul_norm = mul_norm
         self.wtd_with_history = wtd_with_history
         self.learning_output = learning_output
+        self.approximation_norm = approximation_norm
 
     def cwt_loss(self, pred, target, device, wavelet='cgau1', mode='constant'):
         error = torch.tensor(0.0).to(device)
@@ -110,7 +112,7 @@ class mulADE(torch.nn.Module):
             error += scale_error.mean() 
         return error
 
-    def dwt_loss(self, details, target, probabilities, device, wavelet='haar', mode='constant'):
+    def dwt_loss(self, details, target, probabilities, device, wavelet='haar', mode='constant', approximation_norm=False):
         self.visualize(details, target, probabilities, False)
         effective_num = 0
         detail_loss = torch.tensor(0.0).to(device)
@@ -120,7 +122,7 @@ class mulADE(torch.nn.Module):
         if not self.wtd_with_history:
             target = target[...,self.history_length:]
         packet = ptwt.wavedec(target, wavelet, level = level-1, mode = mode)
-        for p, d in zip(packet, details):
+        for i, (p, d) in enumerate(zip(packet, details)):
             b, r, m, t, dim = d.shape
             d = d.reshape(b, r*m, t, dim)
             d, _ = sort_predictions(d, probabilities, k=self.k)
@@ -132,6 +134,8 @@ class mulADE(torch.nn.Module):
             if self.wtd_with_history:
                 history_points = self.history_length // interval
                 horizon += history_points
+            if i == level - 1 and self.approximation_norm:
+                p = p/2**(level-2)
             e=torch.norm(d[...,:p.shape[-1]]-p[...,:d.shape[-1]], p=2, dim=-2)[...,:horizon]
             if self.mul_norm:
                 effective_num += e.shape[-1]

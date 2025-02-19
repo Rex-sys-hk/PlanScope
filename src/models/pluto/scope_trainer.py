@@ -46,6 +46,8 @@ class LightningTrainer(pl.LightningModule):
         init_weights: list[float] = [1, 1, 1, 1, 1, 1],
         wavelet: list[str] = ['cgau1', 'constant', 'bior1.3', 'constant'],
         wtd_with_history: bool = False,
+        approximation_norm: bool = False,
+        time_decay: bool = False,
     ) -> None:
         """
         Initializes the class.
@@ -76,6 +78,7 @@ class LightningTrainer(pl.LightningModule):
         self.radius = model.radius
         self.num_modes = model.num_modes
         self.mode_interval = self.radius / self.num_modes
+        self.time_decay = time_decay
 
         if use_collision_loss:
             self.collision_loss = ESDFCollisionLoss()
@@ -85,10 +88,13 @@ class LightningTrainer(pl.LightningModule):
                               max_horizon=max_horizon, 
                               learning_output=learning_output,
                               wtd_with_history=wtd_with_history,
-                              wavelet=wavelet
+                              wavelet=wavelet,
+                              approximation_norm=approximation_norm,
                               ).to(self.device)
-        self.weights = torch.autograd.Variable(torch.tensor(init_weights).to(self.device), requires_grad=True)
         self.dynamic_weight = dynamic_weight
+        self.weights = torch.tensor(init_weights).to(self.device)
+        if self.dynamic_weight:
+            self.weights = torch.autograd.Variable(self.weights, requires_grad=True)
 
         self.mvn_loss = MVNLoss(k=3, with_grad=True).to(self.device)
         print('WARNING: Overall future time horizon is set to 80')
@@ -272,6 +278,10 @@ class LightningTrainer(pl.LightningModule):
             collision_loss = trajectory.new_zeros(1)
 
         reg_loss = F.smooth_l1_loss(best_trajectory, target, reduction="none").sum(-1)
+        if self.time_decay:
+            decay_weights = torch.exp(-0.1*torch.arange(reg_loss.shape[-1], device=reg_loss.device) 
+                                        / torch.exp(torch.tensor(1,  device=reg_loss.device))).unsqueeze(0)
+            reg_loss = decay_weights*reg_loss/decay_weights.mean()
         reg_loss = (reg_loss * valid_mask).sum() / valid_mask.sum()
 
         probability.masked_fill_(r_padding_mask.unsqueeze(-1), -1e6)

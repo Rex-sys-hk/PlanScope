@@ -124,7 +124,9 @@ class ScopePlanner(AbstractPlanner):
         torch.set_grad_enabled(False)
 
         if self._planner_ckpt is not None:
-            self._planner.load_state_dict(load_checkpoint(self._planner_ckpt))
+            mk, uk = self._planner.load_state_dict(load_checkpoint(self._planner_ckpt), strict=False)
+            print('>>>Missing keys:', mk)
+            print('>>>Unexpected keys:', uk)
 
         self._planner.eval()
         self._planner = self._planner.to(self.device)

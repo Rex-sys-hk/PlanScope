@@ -9,3 +9,7 @@ rich==13.3.4
 imageio-ffmpeg
 shapely==2.0.5
 ptwt==0.1.9
+imageio
+grpcio==1.43.0
+fsspec==2023.3.0
+huggingface-hub

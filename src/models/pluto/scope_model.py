@@ -48,6 +48,7 @@ class PlanningModel(TorchModuleWrapper):
         ref_free_traj=False,
         recursive_decoder:bool=False,
         multihead_decoder:bool=False,
+        independent_detokenizer:bool=False,
         mvn_loss=False,
         wtd_with_history=False,
         feature_builder: PlutoFeatureBuilder = PlutoFeatureBuilder(),
@@ -108,6 +109,7 @@ class PlanningModel(TorchModuleWrapper):
             recursive_decoder=recursive_decoder,
             multihead_decoder=multihead_decoder,
             wtd_with_history=wtd_with_history,
+            independent_detokenizer=independent_detokenizer,
         )
 
         if use_hidden_proj:

@@ -168,3 +168,5 @@ videos/
 # sim_*.sh
 details.pdf
 .fuse*
+nuplan-devkit/
+condaenv*
