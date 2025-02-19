@@ -1,4 +1,4 @@
-name: planscope_r
+name: planscope
 channels:
   - defaults
   - https://repo.anaconda.com/pkgs/main

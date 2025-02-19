@@ -100,6 +100,7 @@ class HierachicalDecoder(nn.Module):
         yaw_constraint=False,
         cat_x=False,
         recursive_decoder: bool = False,
+        residual_decoder: bool = False,
         independent_detokenizer: bool = False,
         wtd_with_history: bool = False,
         multihead_decoder: bool = False,
@@ -138,6 +139,7 @@ class HierachicalDecoder(nn.Module):
         nn.init.normal_(self.m_emb, mean=0.0, std=0.01)
         nn.init.normal_(self.m_pos, mean=0.0, std=0.01)
         self.recursive_decoder = recursive_decoder
+        self.residual_decoder = residual_decoder
         self.multihead_decoder = multihead_decoder
         self.wtd_with_history = wtd_with_history
         self.time_steps = self.future_steps + self.history_steps if wtd_with_history else self.future_steps
@@ -202,9 +204,11 @@ class HierachicalDecoder(nn.Module):
                 memory_key_padding_mask=enc_key_padding_mask,
                 m_pos=self.m_pos,
             )
-            if self.recursive_decoder:
+            if self.recursive_decoder and self.residual_decoder:
                 residual.append(d_q)
                 q = q + d_q
+            else if self.residual_decoder:
+                q = d_q
             else:
                 q = d_q
             assert torch.isfinite(q).all()
