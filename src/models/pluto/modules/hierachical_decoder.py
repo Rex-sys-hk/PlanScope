@@ -205,9 +205,10 @@ class HierachicalDecoder(nn.Module):
                 m_pos=self.m_pos,
             )
             if self.recursive_decoder and self.residual_decoder:
-                residual.append(d_q)
+                residual.append(d_q.clone())
                 q = q + d_q
-            else if self.residual_decoder:
+            elif self.recursive_decoder and not self.residual_decoder:
+                residual.append(d_q.clone())
                 q = d_q
             else:
                 q = d_q
