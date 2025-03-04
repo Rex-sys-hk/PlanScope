@@ -42,12 +42,14 @@ class LightningTrainer(pl.LightningModule):
         mul_ade_loss: list[str] = ['phase_loss', 'scale_loss'],
         dynamic_weight: bool = True,
         max_horizon: int = 10,
+        use_dwt: bool = False,
         learning_output: str = 'velocity',
         init_weights: list[float] = [1, 1, 1, 1, 1, 1],
         wavelet: list[str] = ['cgau1', 'constant', 'bior1.3', 'constant'],
         wtd_with_history: bool = False,
         approximation_norm: bool = False,
         time_decay: bool = False,
+        time_norm: bool = False,
     ) -> None:
         """
         Initializes the class.
@@ -79,6 +81,7 @@ class LightningTrainer(pl.LightningModule):
         self.num_modes = model.num_modes
         self.mode_interval = self.radius / self.num_modes
         self.time_decay = time_decay
+        self.time_norm = time_norm
 
         if use_collision_loss:
             self.collision_loss = ESDFCollisionLoss()
@@ -90,6 +93,7 @@ class LightningTrainer(pl.LightningModule):
                               wtd_with_history=wtd_with_history,
                               wavelet=wavelet,
                               approximation_norm=approximation_norm,
+                              use_dwt=use_dwt,
                               ).to(self.device)
         self.dynamic_weight = dynamic_weight
         self.weights = torch.tensor(init_weights).to(self.device)
@@ -279,9 +283,12 @@ class LightningTrainer(pl.LightningModule):
 
         reg_loss = F.smooth_l1_loss(best_trajectory, target, reduction="none").sum(-1)
         if self.time_decay:
+            # decay_weights = torch.exp(-(0.1*torch.arange(reg_loss.shape[-1], device=reg_loss.device))**2).unsqueeze(0)
             decay_weights = torch.exp(-0.1*torch.arange(reg_loss.shape[-1], device=reg_loss.device) 
-                                        / torch.exp(torch.tensor(1,  device=reg_loss.device))).unsqueeze(0)
+                                        / torch.exp(torch.tensor(1, device=reg_loss.device))).unsqueeze(0)
             reg_loss = decay_weights*reg_loss/decay_weights.mean()
+        if self.time_norm:
+            reg_loss = reg_loss/(reg_loss.mean(dim=0, keepdim=True)+1e-6).clone().detach()
         reg_loss = (reg_loss * valid_mask).sum() / valid_mask.sum()
 
         probability.masked_fill_(r_padding_mask.unsqueeze(-1), -1e6)

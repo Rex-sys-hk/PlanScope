@@ -31,6 +31,8 @@ class mulADE(torch.nn.Module):
         whole_length: int = 101,
         mul_ade_loss: list[str]=['phase_loss', 'angle_loss', 'scale_loss', 'v_loss'],
         max_horizon: int = 10,
+        downsample_rate: int = 2,
+        use_dwt: bool = False,
         mul_norm: bool = False,
         wtd_with_history: bool = False,
         learning_output: str = 'velocity', # or 'velocity'
@@ -66,7 +68,9 @@ class mulADE(torch.nn.Module):
         self.mask = self.mask.unsqueeze(0)
         self.mul_ade_loss = mul_ade_loss
         self.max_horizon = max_horizon
+        self.downsample_rate = downsample_rate
         self.mul_norm = mul_norm
+        self.use_dwt = use_dwt
         self.wtd_with_history = wtd_with_history
         self.learning_output = learning_output
         self.approximation_norm = approximation_norm
@@ -145,6 +149,29 @@ class mulADE(torch.nn.Module):
                 detail_loss += e.mean()
         return detail_loss/effective_num
 
+    def horizon_loss(self, details, target, probabilities, device):
+        effective_num = 0
+        detail_loss = torch.tensor(0.0).to(device)
+        target = target[:,self.history_length:]
+        level = len(details)
+        for i, d in enumerate(details):
+            l = (level-i-1)
+            b, r, m, t, dim = d.shape
+            d = d.reshape(b, r*m, t, dim)
+            d, _ = sort_predictions(d, probabilities, k=self.k)
+            d = d[:,0,:,:2]
+            interval = self.downsample_rate**l
+            horizon = self.max_horizon*2**l
+            e = (d-target)[:,:horizon][:,::interval]
+            e = e.norm(dim=-1, p=2)
+            if self.mul_norm:
+                effective_num += e.shape[-1]
+                detail_loss += e.sum()
+            else:
+                effective_num += 1
+                detail_loss += e.mean()
+        return detail_loss/effective_num
+
     def compute_dis(self, outputs: Dict[str, torch.Tensor], data: Dict[str, torch.Tensor]):
         # def print_keys(d:Dict, pfix=">> "):
         #     for k,v in d.items():
@@ -191,14 +218,20 @@ class mulADE(torch.nn.Module):
 
         # recursive head loss
         details = outputs["details"]
-        if not len(details) == 0:
+        if not len(details) == 0 and self.use_dwt:
             error += self.dwt_loss(details, 
                                    data['agent'][self.learning_output][:,0,:,:2], 
                                    probabilities,
                                    outputs["trajectory"].device, 
                                    self.d_wavelet,
                                    self.d_edge_mode)
-            
+
+        if not len(details) == 0 and not self.use_dwt:
+            error += self.horizon_loss(details, 
+                                   data['agent'][self.learning_output][:,0,:,:2], 
+                                   probabilities,
+                                   outputs["trajectory"].device
+                                   )
         return error
 
     def forward(self, outputs: Dict[str, torch.Tensor], data: Dict[str, torch.Tensor]):
