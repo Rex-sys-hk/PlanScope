@@ -18,12 +18,31 @@ This is the official repository of
 
 ![PlanScopeConcept](https://github.com/user-attachments/assets/c622cb18-8ebe-4b70-94c7-6d7a4c443260)
 
+## TL;NR
+Based on PLUTO, we study the fusion method of long and short term decision making in the trajectory, and the time dependent normalization achieves the most significant improvement in the nuPlan Val4 CLS-NR score.
+
+## Performance Comparison with SOTA methods
+w/o post-processing
+|  Model Name  | Val14 CLS-NR Score  | Val14 CLS-R Score  |
+|  ----  | ----  | ----  |
+| [PLUTO w/o refine](https://github.com/jchengai/pluto)  | 89.04 | 80.01 |
+| [STR2-CPKS-800M w/o refine](https://github.com/Tsinghua-MARS-Lab/StateTransformer?tab=readme-ov-file)| 65.16 | - |
+| [Diffusion Planner](https://github.com/ZhengYinan-AIR/Diffusion-Planner)  | 89.87 | **82.80** |
+| PlanScope (ours)  | **91.32** | 80.96 |
+
+Hybrid Mode
+|  Model Name  | Val14 CLS-NR Score  | Val14 CLS-R Score  |
+|  ----  | ----  | ----  |
+| [PLUTO w/o refine](https://github.com/jchengai/pluto)  | 93.21 | 92.06 |
+| [STR2-CPKS-800M w/o refine](https://github.com/Tsinghua-MARS-Lab/StateTransformer?tab=readme-ov-file)| 93.91 | 92.51 |
+| [Diffusion Planner](https://github.com/ZhengYinan-AIR/Diffusion-Planner)  | **94.26** | **92.90** |
+| PlanScope (ours)  | 93.59 | 91.07 |
 
 ## Setup Environment
 
 ### Setup dataset
 
-Setup the nuPlan dataset following the [offiical-doc](https://nuplan-devkit.readthedocs.io/en/latest/dataset_setup.html)
+Setup the nuPlan dataset following the [official-doc](https://nuplan-devkit.readthedocs.io/en/latest/dataset_setup.html)
 
 ### Setup conda environment
 
@@ -84,12 +103,22 @@ sh train_scope.sh
 
 Copy your the chekpoint path to ```sim_scope.sh``` or ```sim_pluto.sh``` and replace the value of ```CKPT_N``` to run the evaluation. 
 
+<!-- | PlanScope-h10-m6    | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EcxJsqO4QgxJt2HeyfmDEssBelkGmMqzq3pFkk2w5OgQDQ?e=bUem3P)|
+| PlanScope-h20-m6    | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EbdjCkpdTEBKhwnz4VFv0R8BDD0C76zHsV7BedgYlytV5g?e=9BA7ft)| -->
+
 | Model            | Download |
 | ---------------- | -------- |
 | Pluto-aux-nocil-m6-baseline  | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EYkVd-OcOTFLlP5KE7ZnG-0BrluObe4vd7jNAhHeKtmcjw?e=UBmqf1)|
-| PlanScope-h10-m6    | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EcxJsqO4QgxJt2HeyfmDEssBelkGmMqzq3pFkk2w5OgQDQ?e=bUem3P)|
-| PlanScope-h20-m6    | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EbdjCkpdTEBKhwnz4VFv0R8BDD0C76zHsV7BedgYlytV5g?e=9BA7ft)|
-<!---| Pluto-1M-aux-cil-m12-original | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/jchengai_connect_ust_hk/EaFpLwwHFYVKsPVLH2nW5nEBNbPS7gqqu_Rv2V1dzODO-Q?e=LAZQcI)    | -->
+| PlanScope-Ih10-DWT | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EXjVIgwKh3hCmMfJ-rQArcABRn3tH1RZhptPOLYRJjkS2A?e=scYt4e)    |
+| PlanScope-Mh10-DWH | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EXVaD_lc3kJBtUxGSQBBgPwBl8isEQzRaDtfrJ-geDB-XQ?e=pnbSPy)    |
+| PlanScope-Mh20-DWT | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EajN1DzBjKhMg4GiqkuuHuoBGilZzJbkK5QiPD9_GuoDLQ?e=BgidZM)    |
+| --- |
+| PlanScope-Th20 | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EcHd8CFgBH1JqKT9yMyPsr0BukUsXTjfJpNSik_vQQrsLw?e=48VbzA)    |
+| PlanScope-timedecay | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EdMfIvFKuFlLh-SyHVvMB74Bs3TxH5hEp3HCSU34b6yAjg?e=KmVDGh)    |
+| PlanScope-timenorm | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EUMawRA-i-NIimhVp_I_Ft8BeuHWrCJzsVXb-E4BEMMQuA?e=0uRrDN)    |
+| --- |
+| Pluto-1M-aux-cil-m12-original | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/jchengai_connect_ust_hk/EaFpLwwHFYVKsPVLH2nW5nEBNbPS7gqqu_Rv2V1dzODO-Q?e=LAZQcI)    |
+| PlanScope-timenorm-cil-m12 | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/Ed863-9h9ZtFm145JyWGjCIBbF-rInj8P2smuXeG0SAPsg?e=g860Ho)    |
 
 ## Run PlanScope-planner simulation
 
@@ -132,11 +161,17 @@ If you find this repo useful, please consider giving us a star 🌟 and citing o
 - [pluto](https://github.com/jchengai/pluto)
 
 
-## Special Announcement
+## Special Announcement (Updated on 4 March 2025)
 
-This work investigates a technique to enhance the performance of planning models in a pure learning framework. We have deliberately omitted the rule-based pre- and post-processing modules from the baseline approach to mitigate the impact of artificially crafted rules, as claimed in our paper. A certain unauthorized publication led to **inaccuracies in the depiction of its state-of-the-art (SOTA) capabilities**. We hereby clarify this to prevent misunderstanding.
+Our approach has achieved a CLS-NR score of 91.32% without rule-based post-processing, which currently is the highest score in pure-model-mode. 
+However, the main objective is to find a general method for addressing horizon fusing problem, thus enhance the performance of planning models during execution.
 
-Nevertheless, the method introduced in our article is worth trying and could potentially serve as an add-on to augment the performance of the models you are developing, especially when the dataset is small. We are open to sharing and discussing evaluation results to foster a collaborative exchange.
+<!-- This work investigates a technique to enhance the performance of planning models in a pure learning framework. We have deliberately omitted the rule-based pre- and post-processing modules from the baseline approach to mitigate the impact of artificially crafted rules, as claimed in our paper. A certain unauthorized publication led to **inaccuracies in the depiction of its state-of-the-art (SOTA) capabilities**. We hereby clarify this to prevent misunderstanding.
 
-## A common problem of nuPlan Dataset
-https://github.com/motional/nuplan-devkit/issues/379 
+Nevertheless, the method introduced in our article is worth trying and could potentially serve as an add-on to augment the performance of the models you are developing, especially when the dataset is small. We are open to sharing and discussing evaluation results to foster a collaborative exchange. -->
+
+## Others
+- Please mind the common problem of nuPlan Dataset setup: https://github.com/motional/nuplan-devkit/issues/379 
+- Advised NATTEN Version: 0.14.6+torch1121cu116
+- Please mind your Linux system version, Ubuntu 18.04.6 LTS is prefered. Debian may lead to some unexpected error in closed-loop simulation.
+- When training on the 20% dataset, the random selection of data splits during training possibly cause fluctuations of about 2% CLS-NR score on Random14, the training on partial dataset should only be used as reference during development.
