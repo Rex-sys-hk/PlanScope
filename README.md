@@ -4,7 +4,7 @@ This is the official repository of
 
 **PlanScope: Learning to Plan Within Decision Scope Does Matter**
 
-[Ren Xin](https://rex-sys-hk.github.io), [Jie Cheng](https://jchengai.github.io/), and [Jun Ma](https://personal.hkust-gz.edu.cn/junma/index.html)
+[Ren Xin](https://rex-sys-hk.github.io), [Jie Cheng](https://jchengai.github.io/), [Hongji Liu](http://liuhongji.site) and [Jun Ma](https://personal.hkust-gz.edu.cn/junma/index.html)
 
 
 <p align="left">
