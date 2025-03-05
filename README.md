@@ -30,13 +30,13 @@ w/o post-processing
 | [Diffusion Planner](https://github.com/ZhengYinan-AIR/Diffusion-Planner)  | 89.87 | **82.80** |
 | PlanScope (ours)  | **91.32** | 80.96 |
 
-Hybrid Mode
+<!-- Hybrid Mode
 |  Model Name  | Val14 CLS-NR Score  | Val14 CLS-R Score  |
 |  ----  | ----  | ----  |
 | [PLUTO](https://github.com/jchengai/pluto)  | 93.21 | 92.06 |
 | [STR2-CPKS-800M](https://github.com/Tsinghua-MARS-Lab/StateTransformer?tab=readme-ov-file)| 93.91 | 92.51 |
 | [Diffusion Planner](https://github.com/ZhengYinan-AIR/Diffusion-Planner)  | **94.26** | **92.90** |
-| PlanScope (ours)  | 93.59 | 91.07 |
+| PlanScope (ours)  | 93.59 | 91.07 | -->
 
 ## Setup Environment
 
