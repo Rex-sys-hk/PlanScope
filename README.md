@@ -101,7 +101,7 @@ sh train_scope.sh
 
 ## Checkpoint
 
-Copy your the chekpoint path to ```sim_scope.sh``` or ```sim_pluto.sh``` and replace the value of ```CKPT_N``` to run the evaluation. 
+Copy your chekpoint path to ```sim_scope.sh``` or ```sim_pluto.sh``` and replace the value of ```CKPT_N``` to run the evaluation. 
 
 <!-- | PlanScope-h10-m6    | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EcxJsqO4QgxJt2HeyfmDEssBelkGmMqzq3pFkk2w5OgQDQ?e=bUem3P)|
 | PlanScope-h20-m6    | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EbdjCkpdTEBKhwnz4VFv0R8BDD0C76zHsV7BedgYlytV5g?e=9BA7ft)| -->
