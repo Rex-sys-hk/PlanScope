@@ -33,8 +33,8 @@ w/o post-processing
 Hybrid Mode
 |  Model Name  | Val14 CLS-NR Score  | Val14 CLS-R Score  |
 |  ----  | ----  | ----  |
-| [PLUTO w/o refine](https://github.com/jchengai/pluto)  | 93.21 | 92.06 |
-| [STR2-CPKS-800M w/o refine](https://github.com/Tsinghua-MARS-Lab/StateTransformer?tab=readme-ov-file)| 93.91 | 92.51 |
+| [PLUTO](https://github.com/jchengai/pluto)  | 93.21 | 92.06 |
+| [STR2-CPKS-800M](https://github.com/Tsinghua-MARS-Lab/StateTransformer?tab=readme-ov-file)| 93.91 | 92.51 |
 | [Diffusion Planner](https://github.com/ZhengYinan-AIR/Diffusion-Planner)  | **94.26** | **92.90** |
 | PlanScope (ours)  | 93.59 | 91.07 |
 
