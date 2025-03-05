@@ -19,14 +19,14 @@ This is the official repository of
 ![PlanScopeConcept](https://github.com/user-attachments/assets/c622cb18-8ebe-4b70-94c7-6d7a4c443260)
 
 ## TL;NR
-Based on PLUTO, we study the fusion method of long and short term decision making in the trajectory, and the time dependent normalization achieves the most significant improvement in the nuPlan Val4 CLS-NR score.
+Based on PLUTO, we study the integrating method of long and short-term decision making, and the Time Dependent Normalization achieves the most significant improvement to 91.32% in the nuPlan Val4 CLS-NR score.
 
 ## Performance Comparison with SOTA methods
 w/o post-processing
 |  Model Name  | Val14 CLS-NR Score  | Val14 CLS-R Score  |
 |  ----  | ----  | ----  |
-| [PLUTO w/o refine](https://github.com/jchengai/pluto)  | 89.04 | 80.01 |
-| [STR2-CPKS-800M w/o refine](https://github.com/Tsinghua-MARS-Lab/StateTransformer?tab=readme-ov-file)| 65.16 | - |
+| [PLUTO](https://github.com/jchengai/pluto)  | 89.04 | 80.01 |
+| [STR2-CPKS-800M](https://github.com/Tsinghua-MARS-Lab/StateTransformer?tab=readme-ov-file)| 65.16 | - |
 | [Diffusion Planner](https://github.com/ZhengYinan-AIR/Diffusion-Planner)  | 89.87 | **82.80** |
 | PlanScope (ours)  | **91.32** | 80.96 |
 
@@ -161,10 +161,10 @@ If you find this repo useful, please consider giving us a star 🌟 and citing o
 - [pluto](https://github.com/jchengai/pluto)
 
 
-## Special Announcement (Updated on 4 March 2025)
+<!-- ## Special Announcement (Updated on 4 March 2025)
 
 Our approach has achieved a CLS-NR score of 91.32% without rule-based post-processing, which currently is the highest score in pure-model-mode. 
-However, the main objective is to find a general method for addressing horizon fusing problem, thus enhance the performance of planning models during execution.
+However, the main objective is to find a general method for addressing horizon fusing problem, thus enhance the performance of planning models during execution. -->
 
 <!-- This work investigates a technique to enhance the performance of planning models in a pure learning framework. We have deliberately omitted the rule-based pre- and post-processing modules from the baseline approach to mitigate the impact of artificially crafted rules, as claimed in our paper. A certain unauthorized publication led to **inaccuracies in the depiction of its state-of-the-art (SOTA) capabilities**. We hereby clarify this to prevent misunderstanding.
 
@@ -175,3 +175,4 @@ Nevertheless, the method introduced in our article is worth trying and could pot
 - Advised NATTEN Version: 0.14.6+torch1121cu116
 - Please mind your Linux system version, Ubuntu 18.04.6 LTS is prefered. Debian may lead to some unexpected error in closed-loop simulation.
 - When training on the 20% dataset, the random selection of data splits during training possibly cause fluctuations of about 2% CLS-NR score on Random14, the training on partial dataset should only be used as reference during development.
+- This repo is updated on 5 March 2025, the previous version can be found by checkout branch archived_1.
