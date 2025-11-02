@@ -106,19 +106,19 @@ Copy your chekpoint path to ```sim_scope.sh``` or ```sim_pluto.sh``` and replace
 <!-- | PlanScope-h10-m6    | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EcxJsqO4QgxJt2HeyfmDEssBelkGmMqzq3pFkk2w5OgQDQ?e=bUem3P)|
 | PlanScope-h20-m6    | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EbdjCkpdTEBKhwnz4VFv0R8BDD0C76zHsV7BedgYlytV5g?e=9BA7ft)| -->
 
-| Model            | Download |
-| ---------------- | -------- |
-| Pluto-aux-nocil-m6-baseline  | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EYkVd-OcOTFLlP5KE7ZnG-0BrluObe4vd7jNAhHeKtmcjw?e=UBmqf1)|
-| PlanScope-Ih10-DWT | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EXjVIgwKh3hCmMfJ-rQArcABRn3tH1RZhptPOLYRJjkS2A?e=scYt4e)    |
-| PlanScope-Mh10-DWH | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EXVaD_lc3kJBtUxGSQBBgPwBl8isEQzRaDtfrJ-geDB-XQ?e=pnbSPy)    |
-| PlanScope-Mh20-DWT | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EajN1DzBjKhMg4GiqkuuHuoBGilZzJbkK5QiPD9_GuoDLQ?e=BgidZM)    |
+| Model            | Download | Download |
+| ---------------- | -------- | -------- |
+| Pluto-aux-nocil-m6-baseline  | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EYkVd-OcOTFLlP5KE7ZnG-0BrluObe4vd7jNAhHeKtmcjw?e=UBmqf1)|[HuggingFace](https://huggingface.co/rxinhkust/PlanScope_model_zoo/resolve/main/pluto_full_wocil_m6_baseline.ckpt)|
+| PlanScope-Ih10-DWT | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EXjVIgwKh3hCmMfJ-rQArcABRn3tH1RZhptPOLYRJjkS2A?e=scYt4e)    |[HuggingFace](https://huggingface.co/rxinhkust/PlanScope_model_zoo/resolve/main/PlanScope_Ih10_DWT.ckpt)|
+| PlanScope-Mh10-DWH | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EXVaD_lc3kJBtUxGSQBBgPwBl8isEQzRaDtfrJ-geDB-XQ?e=pnbSPy)    |[HuggingFace](https://huggingface.co/rxinhkust/PlanScope_model_zoo/resolve/main/PlanScope_Mh10_DWH.ckpt)|
+| PlanScope-Mh20-DWT | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EajN1DzBjKhMg4GiqkuuHuoBGilZzJbkK5QiPD9_GuoDLQ?e=BgidZM)    |[HuggingFace](https://huggingface.co/rxinhkust/PlanScope_model_zoo/resolve/main/PlanScope_Mh20_DWT.ckpt)|
 | --- |
-| PlanScope-Th20 | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EcHd8CFgBH1JqKT9yMyPsr0BukUsXTjfJpNSik_vQQrsLw?e=48VbzA)    |
-| PlanScope-timedecay | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EdMfIvFKuFlLh-SyHVvMB74Bs3TxH5hEp3HCSU34b6yAjg?e=KmVDGh)    |
-| PlanScope-timenorm | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EUMawRA-i-NIimhVp_I_Ft8BeuHWrCJzsVXb-E4BEMMQuA?e=0uRrDN)    |
+| PlanScope-Th20 | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EcHd8CFgBH1JqKT9yMyPsr0BukUsXTjfJpNSik_vQQrsLw?e=48VbzA)    |[HuggingFace](https://huggingface.co/rxinhkust/PlanScope_model_zoo/resolve/main/PlanScope_Th20.ckpt)|
+| PlanScope-timedecay | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EdMfIvFKuFlLh-SyHVvMB74Bs3TxH5hEp3HCSU34b6yAjg?e=KmVDGh)    |[HuggingFace](https://huggingface.co/rxinhkust/PlanScope_model_zoo/resolve/main/PlanScope_timedecay.ckpt)|
+| PlanScope-timenorm | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/EUMawRA-i-NIimhVp_I_Ft8BeuHWrCJzsVXb-E4BEMMQuA?e=0uRrDN)    |[HuggingFace](https://huggingface.co/rxinhkust/PlanScope_model_zoo/resolve/main/PlanScope_timenorm.ckpt)|
 | --- |
-| Pluto-1M-aux-cil-m12-original | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/jchengai_connect_ust_hk/EaFpLwwHFYVKsPVLH2nW5nEBNbPS7gqqu_Rv2V1dzODO-Q?e=LAZQcI)    |
-| PlanScope-timenorm-cil-m12 | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/Ed863-9h9ZtFm145JyWGjCIBbF-rInj8P2smuXeG0SAPsg?e=g860Ho)    |
+| Pluto-1M-aux-cil-m12-original | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/jchengai_connect_ust_hk/EaFpLwwHFYVKsPVLH2nW5nEBNbPS7gqqu_Rv2V1dzODO-Q?e=LAZQcI)    |[HuggingFace](https://huggingface.co/rxinhkust/PlanScope_model_zoo/resolve/main/pluto_1M_aux_cil_m12_ori.ckpt)|
+| PlanScope-timenorm-cil-m12 | [OneDrive](https://hkustconnect-my.sharepoint.com/:u:/g/personal/rxin_connect_ust_hk/Ed863-9h9ZtFm145JyWGjCIBbF-rInj8P2smuXeG0SAPsg?e=g860Ho)    |[HuggingFace](https://huggingface.co/rxinhkust/PlanScope_model_zoo/resolve/main/PlanScope_timenorm_m12_cil.ckpt)|
 
 ## Run PlanScope-planner simulation
 
