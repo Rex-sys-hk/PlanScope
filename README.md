@@ -21,6 +21,21 @@ This is the official repository of
 ## TL;NR
 Based on PLUTO, we study the integrating method of long and short-term decision making, and the Time Dependent Normalization achieves the most significant improvement to 91.32% in the nuPlan Val4 CLS-NR score.
 
+## Video
+<div style="display: inline-flex; align-items: center;">
+  <!-- Video Thumbnail -->
+  <a href="https://www.youtube.com/watch?v=eW4VCPjPVQY" target="_blank" style="display: inline-block;">
+    <img src="https://img.youtube.com/vi/eW4VCPjPVQY/0.jpg" style="width: 50%; display: block;">
+  </a>
+
+  <!-- Play Button -->
+  <a href="https://www.youtube.com/watch?v=eW4VCPjPVQY" target="_blank" style="display: inline-block;">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_play_button_icon_%282013%E2%80%932017%29.svg" 
+         style="width: 50px; height: auto; margin-left: 5px;">
+  </a>
+</div>
+
+
 ## Performance Comparison with SOTA methods
 w/o post-processing
 |  Model Name  | Val14 CLS-NR Score  | Val14 CLS-R Score  |
